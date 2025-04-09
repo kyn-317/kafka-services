@@ -9,7 +9,7 @@ public sealed interface PaymentRequest extends Request {
 
     @Builder
     record Process(UUID orderId,
-                   Integer customerId,
+                   UUID customerId,
                    Integer amount) implements PaymentRequest {
     }
 

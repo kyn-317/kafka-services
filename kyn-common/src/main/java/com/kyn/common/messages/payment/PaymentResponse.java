@@ -10,7 +10,7 @@ public sealed interface PaymentResponse extends Response {
     @Builder
     record Processed(UUID orderId,
                      UUID paymentId,
-                     Integer customerId,
+                     UUID customerId,
                      Integer amount) implements PaymentResponse {
 
     }
