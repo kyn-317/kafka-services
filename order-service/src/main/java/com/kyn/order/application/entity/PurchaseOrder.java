@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
 
 import com.kyn.order.common.enums.OrderStatus;
 
