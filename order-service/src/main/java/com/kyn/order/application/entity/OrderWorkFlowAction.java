@@ -21,5 +21,4 @@ public class OrderWorkFlowAction {
     private UUID orderId;
     private WorkflowAction action;
     private Instant createdAt;
-
 }
