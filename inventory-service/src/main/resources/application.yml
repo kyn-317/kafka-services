@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: inventory-service
+  r2dbc:
+    url: r2dbc:h2:mem:///inventorydb
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+
+server:
+  port: 8082 

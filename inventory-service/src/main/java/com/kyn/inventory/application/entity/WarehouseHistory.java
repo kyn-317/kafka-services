@@ -13,12 +13,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Warehouse {
+public class WarehouseHistory {
 
     @Id
+    private UUID historyId;
     private UUID id;
     private UUID productId;
     private UUID requesterId;
@@ -28,4 +29,4 @@ public class Warehouse {
     private String snapshotDate;
     private LocalDateTime createdAt;
     private String createdBy;
-}
+} 

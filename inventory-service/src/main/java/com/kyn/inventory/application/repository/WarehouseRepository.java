@@ -1,13 +1,16 @@
 package com.kyn.inventory.application.repository;
 
 import java.util.UUID;
-import java.time.LocalDate;
 
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
-import reactor.core.publisher.Flux;
 
+import com.kyn.inventory.application.dto.CurrentStock;
 import com.kyn.inventory.application.entity.Warehouse;
+import com.kyn.inventory.application.enums.StorageRetrievalType;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, UUID> {
     
@@ -20,6 +23,8 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
                     WHEN storage_retrieval_type = 'BASE' THEN amount
                     WHEN storage_retrieval_type = 'RECEIVING' THEN amount
                     WHEN storage_retrieval_type = 'RETRIEVAL' THEN -amount
+                    WHEN storage_retrieval_type = 'RECEIVING_CANCEL' THEN -amount
+                    WHEN storage_retrieval_type = 'RETRIEVAL_CANCEL' THEN amount
                 END) as current_stock
             FROM warehouse
             WHERE product_id = :productId
@@ -36,7 +41,7 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
         AND w.snapshot_date = :snapshotDate
         ORDER BY w.snapshot_date DESC
     """)
-    Flux<Warehouse> findCurrentStockWithDetails(UUID productId, LocalDate snapshotDate);
+    Flux<CurrentStock> findCurrentStockWithDetails(UUID productId, String snapshotDate);
 
     @Query("""
         SELECT 
@@ -46,12 +51,34 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
                 WHEN storage_retrieval_type = 'BASE' THEN amount
                 WHEN storage_retrieval_type = 'RECEIVING' THEN amount
                 WHEN storage_retrieval_type = 'RETRIEVAL' THEN -amount
+                WHEN storage_retrieval_type = 'RECEIVING_CANCEL' THEN -amount
+                WHEN storage_retrieval_type = 'RETRIEVAL_CANCEL' THEN amount
             END) as current_stock
         FROM warehouse
-        WHERE snapshot_date = :date
+        WHERE snapshot_date = :snapshotDate
         AND storage_retrieval_type IN ('BASE', 'RECEIVING', 'RETRIEVAL')
         GROUP BY product_id, snapshot_date
         ORDER BY product_id
     """)
-    Flux<Object[]> findDailyStockSummary(LocalDate date);
+    Flux<CurrentStock> findDailyStockSummary(String snapshotDate);
+
+    Flux<Warehouse> findByProductIdAndSnapshotDate(UUID productId, String snapshotDate);
+    
+    Flux<Warehouse> findBySnapshotDate(String snapshotDate);
+    
+    Mono<Void> deleteBySnapshotDate(String snapshotDate);
+
+    @Query("""
+        SELECT * FROM warehouse 
+        WHERE (:productId IS NULL OR product_id = :productId)
+        AND (:retrievalType IS NULL OR storage_retrieval_type = :retrievalType)
+        AND snapshot_date BETWEEN :startDate AND :endDate
+        ORDER BY created_by ASC
+    """)
+    Flux<Warehouse> findByConditions(
+        UUID productId,
+        StorageRetrievalType retrievalType,
+        String startDate,
+        String endDate
+    );
 }

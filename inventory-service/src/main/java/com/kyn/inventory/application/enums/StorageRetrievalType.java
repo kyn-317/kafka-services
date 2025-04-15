@@ -4,5 +4,7 @@ public enum StorageRetrievalType {
     
     BASE,
     RECEIVING,
-    RETRIEVAL
+    RETRIEVAL,
+    RECEIVING_CANCEL,
+    RETRIEVAL_CANCEL
 }
