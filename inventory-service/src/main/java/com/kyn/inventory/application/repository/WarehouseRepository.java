@@ -41,7 +41,7 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
         AND w.snapshot_date = :snapshotDate
         ORDER BY w.snapshot_date DESC
     """)
-    Flux<CurrentStock> findCurrentStockWithDetails(UUID productId, String snapshotDate);
+    Mono<CurrentStock> findCurrentStockWithDetails(UUID productId, String snapshotDate);
 
     @Query("""
         SELECT 

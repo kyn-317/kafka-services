@@ -16,7 +16,7 @@ public interface WarehouseService {
 
     Mono<Warehouse> restore(WarehouseRequestDto request);
 
-    Flux<CurrentStock> findCurrentStockWithDetails(WarehouseSearch request);
+    Mono<CurrentStock> findCurrentStockWithDetails(WarehouseSearch request);
 
     Flux<CurrentStock> findDailyStockSummary(WarehouseSearch request);
     

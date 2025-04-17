@@ -100,6 +100,3 @@ public class RedissonStockServiceImpl implements RedissonStockService {
             .doOnComplete(() -> log.info("Refreshed all product caches"));
     }
 }
- RedissonStockServiceImpl {
-    
-}

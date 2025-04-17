@@ -34,7 +34,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public Flux<CurrentStock> findCurrentStockWithDetails(WarehouseSearch request) {
+    public Mono<CurrentStock> findCurrentStockWithDetails(WarehouseSearch request) {
         return warehouseRepository.findCurrentStockWithDetails(request.productId(), request.snapshotDate());
     }
 
