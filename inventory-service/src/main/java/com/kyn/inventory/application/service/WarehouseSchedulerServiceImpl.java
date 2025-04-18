@@ -11,6 +11,7 @@ import com.kyn.inventory.application.mapper.EntityDtoMapper;
 import com.kyn.inventory.application.repository.WarehouseHistoryRepository;
 import com.kyn.inventory.application.repository.WarehouseRepository;
 import com.kyn.inventory.application.service.interfaces.WarehouseSchedulerService;
+import com.kyn.inventory.application.util.FormatUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,9 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class WarehouseSchedulerServiceImpl implements WarehouseSchedulerService {
-
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd");
-    
     private final WarehouseRepository warehouseRepository;
     private final WarehouseHistoryRepository warehouseHistoryRepository;
     
@@ -37,8 +35,8 @@ public class WarehouseSchedulerServiceImpl implements WarehouseSchedulerService 
         LocalDate yesterday = LocalDate.now().minusDays(1);
         LocalDate today = LocalDate.now();
         
-        String yesterdayStr = yesterday.format(DATE_FORMATTER);
-        String todayStr = today.format(DATE_FORMATTER);
+        String yesterdayStr = yesterday.format(FormatUtil.DATE_FORMATTER);
+        String todayStr = today.format(FormatUtil.DATE_FORMATTER);
         
         log.info("Starting daily warehouse batch process: {} -> {}", yesterdayStr, todayStr);
         //  save in history 
