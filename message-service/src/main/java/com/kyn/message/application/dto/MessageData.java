@@ -1,5 +1,7 @@
 package com.kyn.message.application.dto;
 
+import java.time.Instant;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MessageData {
-    String message;
-    String timestamp;
+public class MessageData<T> {
+    T message;
+    Instant timestamp;
 }

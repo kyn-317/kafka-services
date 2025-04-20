@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.kyn.common.messages.message.MessageRequest;
 import com.kyn.common.messages.message.MessageResponse;
+import com.kyn.message.application.dto.ServerSentMessage;
 import com.kyn.message.application.service.interfaces.MessageService;
 import com.kyn.message.messaging.processor.MessageRequestProcessor;
 
@@ -51,17 +52,18 @@ public class MessageServiceImpl implements MessageService{
     /**
      * Request 객체를 받아서 ServerSentEvent로 변환하여 발행
      */
-    public void processRequest(MessageRequest request) {
-        log.info("요청 처리: {}", request);
+    @Override
+    public void processRequest(ServerSentMessage message) {
+        log.info("요청 처리: {}", message);
         
         // Request 타입에 따라 이벤트 타입 결정
-        String eventType = request.getClass().getSimpleName();
+        String eventType = message.getClass().getSimpleName();
         
         // 이벤트 생성
         ServerSentEvent<String> event = ServerSentEvent.<String>builder()
                 .id(UUID.randomUUID().toString())
                 .event(eventType)
-                .data(request.toString())
+                .data(message.toString())
                 .build();
                 
         // 모든 구독자에게 이벤트 발행
@@ -71,8 +73,9 @@ public class MessageServiceImpl implements MessageService{
     /**
      * 클라이언트별 ID를 받아 해당 클라이언트에게만 이벤트 전송
      */
-    public void sendEventToClient(String clientId, MessageRequest request) {
-        log.info("클라이언트 {} 에게 이벤트 전송: {}", clientId, request);
+    @Override
+    public Mono<Void> sendEventToClient(String clientId, ServerSentMessage message) {
+        log.info("클라이언트 {} 에게 이벤트 전송: {}", clientId, message);
         
         Many<ServerSentEvent<String>> clientSink = sinkMap.computeIfAbsent(
             clientId, id -> Sinks.many().multicast().onBackpressureBuffer()
@@ -80,16 +83,18 @@ public class MessageServiceImpl implements MessageService{
         
         ServerSentEvent<String> event = ServerSentEvent.<String>builder()
                 .id(UUID.randomUUID().toString())
-                .event(request.getClass().getSimpleName())
-                .data(request.toString())
+                .event(message.getClass().getSimpleName())
+                .data(message.toString())
                 .build();
                 
         clientSink.tryEmitNext(event);
+        return Mono.empty();
     }
     
     /**
      * 모든 클라이언트를 위한 SSE 스트림 반환
      */
+    @Override
     public Flux<ServerSentEvent<String>> getEventStream() {
         return sink.asFlux()
                 .mergeWith(getHeartbeat());
@@ -98,6 +103,7 @@ public class MessageServiceImpl implements MessageService{
     /**
      * 특정 클라이언트를 위한 SSE 스트림 반환
      */
+    @Override
     public Flux<ServerSentEvent<String>> getEventStreamForClient(String clientId) {
         Many<ServerSentEvent<String>> clientSink = sinkMap.computeIfAbsent(
             clientId, id -> Sinks.many().multicast().onBackpressureBuffer()
@@ -122,6 +128,7 @@ public class MessageServiceImpl implements MessageService{
     /**
      * 클라이언트 연결 해제 시 리소스 정리
      */
+    @Override
     public void removeClient(String clientId) {
         sinkMap.remove(clientId);
         log.info("클라이언트 {} 연결 해제됨", clientId);

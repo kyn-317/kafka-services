@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MessageRequest {
+public class ServerSentMessage<T> {
     String type;
-    MessageData data;
+    MessageData<T> data;
 }

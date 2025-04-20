@@ -5,7 +5,9 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
 
 import com.kyn.common.messages.Request;
-import com.kyn.message.application.dto.MessageRequest;
+import com.kyn.common.messages.message.MessageRequest;
+import com.kyn.message.application.dto.MessageData;
+import com.kyn.message.application.dto.ServerSentMessage;
 import com.kyn.message.application.service.MessageServiceImpl;
 
 import lombok.RequiredArgsConstructor;
@@ -45,7 +47,13 @@ public class MessageController {
     @PostMapping("/publish")
     public Mono<Void> publishEvent(@RequestBody MessageRequest request) {
         log.info("Event publish request: {}", request);
-        messageService.processRequest(request);
+        var serverSentMessage = ServerSentMessage.builder()
+            .type("push")
+            .data(MessageData.builder()
+                .message(request)
+                .build())
+            .build();
+        messageService.processRequest(serverSentMessage);
         return Mono.empty();
     }
 
@@ -57,7 +65,13 @@ public class MessageController {
             @PathVariable String clientId,
             @RequestBody MessageRequest request) {
         log.info("Client {} publish event request: {}", clientId, request);
-        messageService.sendEventToClient(clientId, request);
+        var serverSentMessage = ServerSentMessage.builder()
+            .type("push")
+            .data(MessageData.builder()
+                .message(request)
+                .build())
+            .build();
+        messageService.sendEventToClient(clientId, serverSentMessage);
         return Mono.empty();
     }
 
