@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 
 @Configuration
-
 @Slf4j
 public class MessageRequestConfig {
 
@@ -33,10 +32,17 @@ public class MessageRequestConfig {
     @Bean
     public Consumer<Flux<Message<MessageRequest>>> processor() {
         return flux -> flux.map(MessageConverter::toRecord)
-                           .doOnNext(r -> log.info("shipping service received {}", r.message()))
+                           .doOnNext(r -> log.info("메시지 서비스가 메시지를 수신했습니다: type={}, orderId={}", 
+                                                r.message().getClass().getSimpleName(),
+                                                r.message().orderId()))
                            .concatMap(r -> this.messageRequestProcessor.process(r.message())
-                                                                       .doOnSuccess(e -> r.acknowledgement().acknowledge())
-                                                                       .doOnError(e -> log.error(e.getMessage()))
+                                                                       .doOnSuccess(e -> {
+                                                                           log.info("메시지 처리가 완료되었습니다: orderId={}", r.message().orderId());
+                                                                           r.acknowledgement().acknowledge();
+                                                                       })
+                                                                       .doOnError(e -> log.error("메시지 처리 중 오류 발생: {}", e.getMessage()))
                            );
     }
+
+    
 }

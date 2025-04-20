@@ -6,10 +6,14 @@ spring:
       default:
         producer:
           useNativeEncoding: true
+        consumer:
+          useNativeDecoding: true
       bindings:
         processor-in-0:
           destination: message-request
           group: message-service-group
+          consumer:
+            use-native-decoding: true
         processor-out-0:
           destination: message-response
       kafka:
@@ -22,3 +26,5 @@ spring:
           producer-properties:
             "value.serializer": org.springframework.kafka.support.serializer.JsonSerializer
             "key.serializer": org.apache.kafka.common.serialization.StringSerializer
+server:
+  port: 8081
