@@ -1,9 +1,7 @@
 package com.kyn.message.common.dto;
 
-import java.time.Instant;
 import java.util.UUID;
 
-import com.kyn.common.messages.message.MessageStatus;
 
 import lombok.Builder;
 
