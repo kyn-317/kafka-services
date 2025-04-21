@@ -24,10 +24,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class MessageServiceImpl implements MessageService{
 
-    // 여러 클라이언트에게 이벤트를 전송하기 위한 Sink
+    // sink for sending events to multiple clients
     private final Many<ServerSentEvent<String>> sink;
     
-    // 특정 ID별로 Sink를 관리하기 위한 맵
+    // map for managing sinks by specific ID
     private final ConcurrentHashMap<String, Many<ServerSentEvent<String>>> sinkMap;
 
     public MessageServiceImpl() {
@@ -37,9 +37,9 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     public void sendMessage(Message<String> message) {
-        log.info("메시지 수신: {}", message.getPayload());
+        log.info("message received: {}", message.getPayload());
         
-        // 모든 구독자에게 메시지 전송
+        // send message to all subscribers
         ServerSentEvent<String> event = ServerSentEvent.<String>builder()
                 .id(UUID.randomUUID().toString())
                 .event("message")
@@ -50,32 +50,32 @@ public class MessageServiceImpl implements MessageService{
     }
     
     /**
-     * Request 객체를 받아서 ServerSentEvent로 변환하여 발행
+     * Request object to ServerSentEvent
      */
     @Override
     public void processRequest(ServerSentMessage message) {
-        log.info("요청 처리: {}", message);
+        log.info("request processing: {}", message);
         
-        // Request 타입에 따라 이벤트 타입 결정
+        // determine event type based on Request type
         String eventType = message.getClass().getSimpleName();
         
-        // 이벤트 생성
+        // create event
         ServerSentEvent<String> event = ServerSentEvent.<String>builder()
                 .id(UUID.randomUUID().toString())
                 .event(eventType)
                 .data(message.toString())
                 .build();
                 
-        // 모든 구독자에게 이벤트 발행
+        // publish event to all subscribers
         sink.tryEmitNext(event);
     }
     
     /**
-     * 클라이언트별 ID를 받아 해당 클라이언트에게만 이벤트 전송
+     * return SSE stream for specific client
      */
     @Override
     public Mono<Void> sendEventToClient(String clientId, ServerSentMessage message) {
-        log.info("클라이언트 {} 에게 이벤트 전송: {}", clientId, message);
+        log.info("client {} sending event: {}", clientId, message);
         
         Many<ServerSentEvent<String>> clientSink = sinkMap.computeIfAbsent(
             clientId, id -> Sinks.many().multicast().onBackpressureBuffer()
@@ -92,7 +92,7 @@ public class MessageServiceImpl implements MessageService{
     }
     
     /**
-     * 모든 클라이언트를 위한 SSE 스트림 반환
+     * return SSE stream for all clients
      */
     @Override
     public Flux<ServerSentEvent<String>> getEventStream() {
@@ -101,7 +101,7 @@ public class MessageServiceImpl implements MessageService{
     }
     
     /**
-     * 특정 클라이언트를 위한 SSE 스트림 반환
+     * return SSE stream for specific client
      */
     @Override
     public Flux<ServerSentEvent<String>> getEventStreamForClient(String clientId) {
@@ -114,7 +114,7 @@ public class MessageServiceImpl implements MessageService{
     }
     
     /**
-     * 연결 유지를 위한 하트비트(keepalive) 이벤트 생성
+     * keepalive event for connection maintenance
      */
     private Flux<ServerSentEvent<String>> getHeartbeat() {
         return Flux.interval(Duration.ofSeconds(15))
@@ -126,12 +126,12 @@ public class MessageServiceImpl implements MessageService{
     }
     
     /**
-     * 클라이언트 연결 해제 시 리소스 정리
+     * disconnect client
      */
     @Override
     public void removeClient(String clientId) {
         sinkMap.remove(clientId);
-        log.info("클라이언트 {} 연결 해제됨", clientId);
+        log.info("client {} disconnected", clientId);
     }
 
 }

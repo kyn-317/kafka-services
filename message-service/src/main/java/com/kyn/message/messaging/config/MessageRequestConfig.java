@@ -32,15 +32,15 @@ public class MessageRequestConfig {
     @Bean
     public Consumer<Flux<Message<MessageRequest>>> processor() {
         return flux -> flux.map(MessageConverter::toRecord)
-                           .doOnNext(r -> log.info("메시지 서비스가 메시지를 수신했습니다: type={}, orderId={}", 
+                           .doOnNext(r -> log.info("message service received message: type={}, orderId={}", 
                                                 r.message().getClass().getSimpleName(),
                                                 r.message().orderId()))
                            .concatMap(r -> this.messageRequestProcessor.process(r.message())
                                                                        .doOnSuccess(e -> {
-                                                                           log.info("메시지 처리가 완료되었습니다: orderId={}", r.message().orderId());
+                                                                           log.info("message processing completed: orderId={}", r.message().orderId());
                                                                            r.acknowledgement().acknowledge();
                                                                        })
-                                                                       .doOnError(e -> log.error("메시지 처리 중 오류 발생: {}", e.getMessage()))
+                                                                       .doOnError(e -> log.error("message processing error: {}", e.getMessage()))
                            );
     }
 
