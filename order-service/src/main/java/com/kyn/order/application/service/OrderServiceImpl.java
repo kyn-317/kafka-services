@@ -30,36 +30,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Mono<PurchaseOrderDto> placeOrder(OrderCreateRequest request) {
-        var purchaseOrder = PurchaseOrder.builder()
-                              .orderId(UUID.randomUUID())
-                              .customerId(request.customerId())
-                              .productId(request.productId())
-                              .quantity(request.quantity())
-                              .unitPrice(request.unitPrice())
-                              .amount(request.quantity() * request.unitPrice())
-                              .status(OrderStatus.PENDING)
-                              .build();
-        
-        return this.repository.save(purchaseOrder)
-                      .map(EntityDtoMapper::toDto)
-                      .doOnNext(eventListener::emitOrderCreated);
+        var entity = EntityDtoMapper.toPurchaseOrder(request);
+        return this.repository.save(entity)
+                              .map(EntityDtoMapper::toPurchaseOrderDto)
+                              .doOnNext(eventListener::emitOrderCreated);
     }
 
     @Override
     public Flux<PurchaseOrderDto> getAllOrders() {
         return this.repository.findAll()
-                      .map(EntityDtoMapper::toDto);
+                              .map(EntityDtoMapper::toPurchaseOrderDto);
     }
 
     @Override
     public Mono<OrderDetails> getOrderDetails(UUID orderId) {
         return this.repository.findById(orderId)
-                      .map(EntityDtoMapper::toDto)
-                      .zipWith(this.actionRetriever.retrieve(orderId).collectList())
-                      .map(t -> OrderDetails.builder()
-                                  .order(t.getT1())
-                                  .actions(t.getT2())
-                                  .build());
+                              .map(EntityDtoMapper::toPurchaseOrderDto)
+                              .zipWith(this.actionRetriever.retrieve(orderId).collectList())
+                              .map(t -> EntityDtoMapper.toOrderDetails(t.getT1(), t.getT2()));
     }
-    
-} 
+
+}
