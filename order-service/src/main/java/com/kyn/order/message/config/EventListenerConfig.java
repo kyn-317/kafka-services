@@ -1,15 +1,17 @@
 package com.kyn.order.message.config;
 
+import com.kyn.common.messages.message.MessageRequest;
+import com.kyn.order.common.service.MessageEventListener;
 import com.kyn.order.common.service.OrderEventListener;
+import com.kyn.order.message.publisher.MessageEventListenerImpl;
 import com.kyn.order.message.publisher.OrderEventListenerImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.publisher.Sinks;
 
 import java.util.UUID;
-
 @Configuration
-public class OrderEventListenerConfig {
+public class EventListenerConfig {
 
     @Bean
     public OrderEventListener orderEventListener(){
@@ -18,4 +20,11 @@ public class OrderEventListenerConfig {
         return new OrderEventListenerImpl(sink, flux);
     }
 
+    @Bean
+    public MessageEventListener messageEventListener(){
+        var sink = Sinks.many().unicast().<MessageRequest>onBackpressureBuffer();
+        var flux = sink.asFlux();
+        return new MessageEventListenerImpl(sink, flux);
+    }
 }
+
