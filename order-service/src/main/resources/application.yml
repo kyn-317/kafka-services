@@ -1,20 +1,22 @@
 spring:
   cloud:
     function:
-      definition: orderOrchestrator;messageEventSupplier
+      definition: messageEventSupplier;MessageConsumer #orderOrchestrator;
     stream:
       default:
         producer:
           useNativeEncoding: true
       bindings:
-        orderOrchestrator-in-0:
-          destination: payment-response,inventory-response
-          group: order-service-group
-        payment-request-channel:
-          destination: payment-request
-        inventory-request-channel:
-          destination: inventory-request
+#        orderOrchestrator-in-0:
+#          destination: payment-response,inventory-response
+#          group: order-service-group
+#        payment-request-channel:
+#          destination: payment-request
+#        inventory-request-channel:
+#          destination: inventory-request
         messageEventSupplier-out-0:
+          destination: message-request-channel
+        messageConsumer-in-0:
           destination: message-request-channel
       kafka:
         binder:
