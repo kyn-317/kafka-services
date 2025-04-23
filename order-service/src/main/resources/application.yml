@@ -16,8 +16,10 @@ spring:
           destination: inventory-request
         messageEventSupplier-out-0:
           destination: message-request-channel
+          group: message-service-group
         MessageConsumer-in-0:
           destination: message-request-channel
+          group: message-service-group
       kafka:
         binder:
           consumer-properties:

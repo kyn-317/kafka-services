@@ -10,12 +10,11 @@ spring:
           useNativeDecoding: true
       bindings:
         processor-in-0:
-          destination: message-request
-          group: message-service-group
+          destination: message-request-channel
           consumer:
             use-native-decoding: true
-        processor-out-0:
-          destination: message-response
+#        processor-out-0:
+#          destination: message-response
       kafka:
         binder:
           consumer-properties:
