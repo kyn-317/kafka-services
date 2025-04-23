@@ -1,7 +1,7 @@
 spring:
   cloud:
     function:
-      definition: orderOrchestrator
+      definition: orderOrchestrator;messageEventSupplier
     stream:
       default:
         producer:
@@ -14,8 +14,8 @@ spring:
           destination: payment-request
         inventory-request-channel:
           destination: inventory-request
-        message-request-channel:
-          destination: message-request
+        messageEventSupplier-out-0:
+          destination: message-request-channel
       kafka:
         binder:
           consumer-properties:
@@ -26,3 +26,7 @@ spring:
           producer-properties:
             "value.serializer": org.springframework.kafka.support.serializer.JsonSerializer
             "key.serializer": org.apache.kafka.common.serialization.StringSerializer
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/kynpost
+    username: kynpostgres
+    password: kynpostgrespw
