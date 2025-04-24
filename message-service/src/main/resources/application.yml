@@ -13,8 +13,6 @@ spring:
           destination: message-request-channel
           consumer:
             use-native-decoding: true
-#        processor-out-0:
-#          destination: message-response
       kafka:
         binder:
           consumer-properties:

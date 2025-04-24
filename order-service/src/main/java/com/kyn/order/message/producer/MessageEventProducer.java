@@ -1,4 +1,4 @@
-package com.kyn.order.producer;
+package com.kyn.order.message.producer;
 
 import java.util.function.Supplier;
 

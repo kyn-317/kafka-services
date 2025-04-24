@@ -1,7 +1,7 @@
 spring:
   cloud:
     function:
-      definition: orderOrchestrator;messageEventSupplier;MessageConsumer
+      definition: orderOrchestrator;messageEventSupplier
     stream:
       default:
         producer:
@@ -15,11 +15,7 @@ spring:
         inventory-request-channel:
           destination: inventory-request
         messageEventSupplier-out-0:
-          destination: message-request-channel
-          group: message-service-group
-        MessageConsumer-in-0:
-          destination: message-request-channel
-          group: message-service-group
+          destination: message-request
       kafka:
         binder:
           consumer-properties:
