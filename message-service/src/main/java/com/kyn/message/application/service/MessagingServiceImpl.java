@@ -28,8 +28,9 @@ public class MessagingServiceImpl implements MessagingService {
         this.messageHistoryRepository = messageHistoryRepository;
     }
 
+
     @Override
-    public Mono<MessageDto> push(PushRequest request) {
+    public Mono<MessageDto> push(MessageRequest.Push request) {
         
         var serverSentMessage = ServerSentMessage.builder()
             .type("push")

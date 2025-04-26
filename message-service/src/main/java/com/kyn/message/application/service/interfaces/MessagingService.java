@@ -7,6 +7,6 @@ import com.kyn.message.common.dto.PushRequest;
 import reactor.core.publisher.Mono;
 
 public interface MessagingService {
-    Mono<MessageDto> push(PushRequest request);
+    Mono<MessageDto> push(MessageRequest.Push request);
 
 }

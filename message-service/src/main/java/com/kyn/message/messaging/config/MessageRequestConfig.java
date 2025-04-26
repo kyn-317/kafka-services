@@ -10,7 +10,6 @@ import com.kyn.common.messages.message.MessageRequest;
 import com.kyn.common.util.MessageConverter;
 import com.kyn.common.util.Record;
 import com.kyn.message.messaging.processor.MessageRequestProcessor;
-
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,8 +18,6 @@ import reactor.core.publisher.Mono;
 public class MessageRequestConfig {
 
     private final MessageRequestProcessor messageRequestProcessor;
-    
-
     public MessageRequestConfig(MessageRequestProcessor messageRequestProcessor) {
         this.messageRequestProcessor = messageRequestProcessor;
     }
@@ -32,6 +29,7 @@ public class MessageRequestConfig {
         .doOnNext(r -> log.info("message service received message: type={}, orderId={}", 
         r.message().getClass().getSimpleName(),
         r.message().orderId()))
+        .map(r -> this.messageRequestProcessor.process(r.message()))
         .then();
 /*         return flux -> flux.map(MessageConverter::toRecord)
                            .doOnNext(r -> log.info("message service received message: type={}, orderId={}", 

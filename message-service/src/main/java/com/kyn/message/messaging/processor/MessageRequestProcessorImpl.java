@@ -23,10 +23,8 @@ public class MessageRequestProcessorImpl implements MessageRequestProcessor{
     @Override   
     public Mono<MessageResponse> handle(MessageRequest.Push request) {
         log.info("message service received message from OrderService: orderId={}, userId={}, message='{}'", 
-            request.orderId(), request.userId(), request.message());
-            
-        var dto = MessageDtoMapper.toPushRequest(request);
-        return messagingService.push(dto)
+            request.orderId(), request.userId(), request.message());    
+        return messagingService.push(request)
                 .doOnSuccess(result -> log.info("message processing completed: messageId={}", result.messageId()))
                 .map(MessageDtoMapper::toMessageResponse);
     }
