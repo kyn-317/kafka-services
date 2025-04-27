@@ -1,5 +1,8 @@
 package com.kyn.inventory.application.service;
 
+import java.time.LocalDateTime;
+
+import org.joda.time.DateTimeUtils;
 import org.springframework.stereotype.Service;
 
 import com.kyn.inventory.application.dto.CurrentStock;
@@ -10,6 +13,7 @@ import com.kyn.inventory.application.entity.Warehouse;
 import com.kyn.inventory.application.mapper.EntityDtoMapper;
 import com.kyn.inventory.application.repository.WarehouseRepository;
 import com.kyn.inventory.application.service.interfaces.WarehouseService;
+import com.kyn.inventory.application.util.FormatUtil;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,22 +29,41 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public Mono<Warehouse> deduct(WarehouseRequestDto request) {
-        return Mono.empty();
+        return warehouseRepository.findCurrentStockWithDetails(request.productId())
+        .flatMap(currentStock -> {
+            if (currentStock.currentStock() < request.quantity()) {
+                return Mono.error(new RuntimeException("Insufficient stock"));
+            }
+            return save(request);
+        });
     }
+    
 
     @Override
     public Mono<Warehouse> restore(WarehouseRequestDto request) {
-        return Mono.empty();
+        return save(request);
+    }
+
+    private Mono<Warehouse> save(WarehouseRequestDto request) {
+        var warehouse = Warehouse.builder()
+        .productId(request.productId())
+        .requesterId(request.requesterId())
+        .orderId(request.orderId())
+        .retrievalType(request.retrievalType())
+        .quantity(request.quantity())
+        .snapshotDate(LocalDateTime.now().format(FormatUtil.DATE_FORMATTER))
+        .build();
+        return warehouseRepository.save(warehouse);
     }
 
     @Override
     public Mono<CurrentStock> findCurrentStockWithDetails(WarehouseSearch request) {
-        return warehouseRepository.findCurrentStockWithDetails(request.productId(), request.snapshotDate());
+        return warehouseRepository.findCurrentStockWithDetails(request.productId());
     }
 
     @Override
-    public Flux<CurrentStock> findDailyStockSummary(WarehouseSearch request) {
-        return warehouseRepository.findDailyStockSummary(request.snapshotDate());
+    public Flux<CurrentStock> findDailyStockSummary() {
+        return warehouseRepository.findDailyStockSummary();
     }
 
     @Override

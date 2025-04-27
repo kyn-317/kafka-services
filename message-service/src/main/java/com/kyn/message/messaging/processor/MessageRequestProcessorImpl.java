@@ -28,4 +28,6 @@ public class MessageRequestProcessorImpl implements MessageRequestProcessor{
                 .doOnSuccess(result -> log.info("message processing completed: messageId={}", result.messageId()))
                 .map(MessageDtoMapper::toMessageResponse);
     }
+
+
 }

@@ -8,5 +8,4 @@ import reactor.core.publisher.Mono;
 
 public interface MessagingService {
     Mono<MessageDto> push(MessageRequest.Push request);
-
 }

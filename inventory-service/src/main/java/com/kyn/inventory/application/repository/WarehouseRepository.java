@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, UUID> {
     
     @Query("""
-        WITH daily_stock AS (
+        WITH current_stock AS (
             SELECT 
                 product_id,
                 snapshot_date,
@@ -28,21 +28,17 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
                 END) as current_stock
             FROM warehouse
             WHERE product_id = :productId
-            AND snapshot_date = :snapshotDate
-            AND storage_retrieval_type IN ('BASE', 'RECEIVING', 'RETRIEVAL')
+            AND storage_retrieval_type IN ('BASE', 'RECEIVING', 'RETRIEVAL', 'RECEIVING_CANCEL', 'RETRIEVAL_CANCEL')
             GROUP BY product_id, snapshot_date
         )
         SELECT 
             w.*,
-            ds.current_stock
+            cs.current_stock
         FROM warehouse w
-        JOIN daily_stock ds ON w.product_id = ds.product_id AND w.snapshot_date = ds.snapshot_date
+        JOIN current_stock cs ON w.product_id = cs.product_id AND w.snapshot_date = cs.snapshot_date
         WHERE w.product_id = :productId
-        AND w.snapshot_date = :snapshotDate
-        ORDER BY w.snapshot_date DESC
     """)
-    Mono<CurrentStock> findCurrentStockWithDetails(UUID productId, String snapshotDate);
-
+    Mono<CurrentStock> findCurrentStockWithDetails(UUID productId);
     @Query("""
         SELECT 
             product_id,
@@ -55,12 +51,11 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
                 WHEN storage_retrieval_type = 'RETRIEVAL_CANCEL' THEN amount
             END) as current_stock
         FROM warehouse
-        WHERE snapshot_date = :snapshotDate
-        AND storage_retrieval_type IN ('BASE', 'RECEIVING', 'RETRIEVAL')
+        WHERE storage_retrieval_type IN ('BASE', 'RECEIVING', 'RETRIEVAL')
         GROUP BY product_id, snapshot_date
         ORDER BY product_id
     """)
-    Flux<CurrentStock> findDailyStockSummary(String snapshotDate);
+    Flux<CurrentStock> findDailyStockSummary();
 
     Flux<Warehouse> findByProductIdAndSnapshotDate(UUID productId, String snapshotDate);
     

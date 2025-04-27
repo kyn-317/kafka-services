@@ -4,11 +4,8 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
-import com.kyn.common.messages.message.MessageRequest;
-import com.kyn.common.messages.message.MessageResponse;
 import com.kyn.message.application.dto.ServerSentMessage;
 import com.kyn.message.application.service.interfaces.MessageService;
-import com.kyn.message.messaging.processor.MessageRequestProcessor;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;

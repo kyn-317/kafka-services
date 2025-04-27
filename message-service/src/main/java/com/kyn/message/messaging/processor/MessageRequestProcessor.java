@@ -13,10 +13,10 @@ public interface MessageRequestProcessor extends RequestProcessor<MessageRequest
     default Mono<MessageResponse> process(MessageRequest request) {
         return switch (request){
             case MessageRequest.Push s -> this.handle(s);
+            default -> Mono.error(new IllegalArgumentException("Unsupported message request type"));
         };
     }
 
     Mono<MessageResponse> handle(MessageRequest.Push request);
-
     
 }
