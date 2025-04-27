@@ -76,4 +76,6 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
         String startDate,
         String endDate
     );
+
+    Mono<Boolean> existsByOrderId(UUID orderId);
 }

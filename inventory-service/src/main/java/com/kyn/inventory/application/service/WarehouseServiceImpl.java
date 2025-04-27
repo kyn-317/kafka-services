@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.joda.time.DateTimeUtils;
 import org.springframework.stereotype.Service;
 
+import com.kyn.common.util.DuplicateEventValidator;
 import com.kyn.inventory.application.dto.CurrentStock;
 import com.kyn.inventory.application.dto.WarehouseDto;
 import com.kyn.inventory.application.dto.WarehouseRequestDto;
@@ -29,7 +30,12 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public Mono<Warehouse> deduct(WarehouseRequestDto request) {
-        return warehouseRepository.findCurrentStockWithDetails(request.productId())
+        return 
+        /* DuplicateEventValidator.validate(
+            this.warehouseRepository.existsByOrderId(request.orderId()),
+        )
+         */
+        warehouseRepository.findCurrentStockWithDetails(request.productId())
         .flatMap(currentStock -> {
             if (currentStock.currentStock() < request.quantity()) {
                 return Mono.error(new RuntimeException("Insufficient stock"));
