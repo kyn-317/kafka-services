@@ -21,13 +21,13 @@ import lombok.NoArgsConstructor;
 @Document("MESSAGE_HISTORY")
 public class MessageHistory extends BaseDocuments {
     @Id
-    private UUID _id;
+    private String _id;
 
     @Field("USER_ID")
-    private UUID userId;
+    private String userId;
 
     @Field("ORDER_ID")
-    private UUID orderId;
+    private String orderId;
 
     @Field("MESSAGE")
     private String message;

@@ -1,5 +1,7 @@
 package com.kyn.message.messaging.processor;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.kyn.common.messages.message.MessageRequest;
@@ -31,8 +33,9 @@ public class MessageRequestProcessorImpl implements MessageRequestProcessor{
             
         // 메시지 히스토리 객체 생성
         var messageHistory = MessageHistory.builder()
-            .userId(request.userId())
-            .orderId(request.orderId())
+            ._id(UUID.randomUUID().toString())
+            .userId(request.userId().toString())
+            .orderId(request.orderId().toString())
             .message(request.message())
             .build();   
         
