@@ -18,7 +18,7 @@ spring:
           consumer-properties:
             "value.deserializer": org.springframework.kafka.support.serializer.JsonDeserializer
             "key.deserializer": org.apache.kafka.common.serialization.StringDeserializer
-            "auto.offset.reset": "earliest"
+            "auto.offset.reset": "latest"
             "spring.json.trusted.packages": "com.kyn.common.messages.*"
           producer-properties:
             "value.serializer": org.springframework.kafka.support.serializer.JsonSerializer

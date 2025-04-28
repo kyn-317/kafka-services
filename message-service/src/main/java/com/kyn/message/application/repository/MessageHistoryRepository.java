@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 import com.kyn.message.application.entity.MessageHistory;
 
 @Repository
-public interface MessageHistoryRepository extends ReactiveMongoRepository<MessageHistory, UUID> {
+public interface MessageHistoryRepository extends ReactiveMongoRepository<MessageHistory, String> {
 }

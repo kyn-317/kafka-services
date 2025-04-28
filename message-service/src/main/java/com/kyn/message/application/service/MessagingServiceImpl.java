@@ -17,11 +17,8 @@ import reactor.core.publisher.Mono;
 public class MessagingServiceImpl implements MessagingService {
 
     private final MessageService messageService;
-    private final MessageHistoryRepository messageHistoryRepository;
-
-    public MessagingServiceImpl(MessageService messageService, MessageHistoryRepository messageHistoryRepository) {
+    public MessagingServiceImpl(MessageService messageService) {
         this.messageService = messageService;
-        this.messageHistoryRepository = messageHistoryRepository;
     }
 
 
@@ -34,8 +31,7 @@ public class MessagingServiceImpl implements MessagingService {
                 .message(request)
                 .build())
             .build();
-        
-        // 클라이언트에 이벤트만 전송하고 즉시 반환
+        //send message to client
         return messageService.sendEventToClient(request.userId().toString(), serverSentMessage);
     }
 }
