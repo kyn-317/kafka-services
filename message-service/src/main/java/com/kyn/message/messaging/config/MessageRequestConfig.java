@@ -4,15 +4,18 @@ import java.util.function.Function;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 
 import com.kyn.common.messages.message.MessageRequest;
+import com.kyn.common.messages.message.MessageResponse;
 import com.kyn.common.util.MessageConverter;
 import com.kyn.common.util.Record;
 import com.kyn.message.messaging.processor.MessageRequestProcessor;
+
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 @Configuration
 @Slf4j
 public class MessageRequestConfig {
@@ -23,14 +26,16 @@ public class MessageRequestConfig {
     }
 
     @Bean
-    public Function<Flux<Message<MessageRequest>>, Mono<Void>> processor() {
+    public Function<Flux<Message<MessageRequest>>, Flux<Message<MessageResponse>>> processor() {
         return flux -> flux.map(MessageConverter::toRecord)
-        .doOnNext(this::printDetails)
-        .doOnNext(r -> log.info("message service received message: type={}, orderId={}", 
-        r.message().getClass().getSimpleName(),
-        r.message().orderId()))
-        .map(r -> this.messageRequestProcessor.process(r.message()))
-        .then();
+        //.doOnNext(r -> log.info("message service received message: type={}, orderId={}", 
+      //  r.message().getClass().getSimpleName(),r.message().orderId()))
+        .concatMap(r -> this.messageRequestProcessor.process(r.message())
+        .doOnSuccess(e -> r.acknowledgement().acknowledge()))
+        //.doOnError(e -> log.error(e.getMessage())))
+        .map(this::toMessage);
+    }
+        
 /*         return flux -> flux.map(MessageConverter::toRecord)
                            .doOnNext(r -> log.info("message service received message: type={}, orderId={}", 
                                                 r.message().getClass().getSimpleName(),
@@ -42,6 +47,13 @@ public class MessageRequestConfig {
                                                                        })
                                                                        .doOnError(e -> log.error("message processing error: {}", e.getMessage()))
                            ).then(); */
+    }
+
+    protected Message<MessageResponse> toMessage(MessageResponse response) {
+        log.info("message service produced {}", response);
+        return MessageBuilder.withPayload(response)
+                             .setHeader(KafkaHeaders.KEY, response.orderId().toString())
+                             .build();
     }
 
 

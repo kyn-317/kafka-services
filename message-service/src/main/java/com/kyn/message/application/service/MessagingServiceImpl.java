@@ -5,16 +5,15 @@ import org.springframework.stereotype.Service;
 import com.kyn.common.messages.message.MessageRequest;
 import com.kyn.message.application.dto.MessageData;
 import com.kyn.message.application.dto.ServerSentMessage;
-import com.kyn.message.application.entity.MessageHistory;
-import com.kyn.message.application.mapper.EntityDtoMapper;
 import com.kyn.message.application.repository.MessageHistoryRepository;
 import com.kyn.message.application.service.interfaces.MessageService;
 import com.kyn.message.application.service.interfaces.MessagingService;
-import com.kyn.message.common.dto.MessageDto;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Service
+@Slf4j
 public class MessagingServiceImpl implements MessagingService {
 
     private final MessageService messageService;
@@ -27,7 +26,7 @@ public class MessagingServiceImpl implements MessagingService {
 
 
     @Override
-    public Mono<MessageDto> push(MessageRequest.Push request) {
+    public Mono<Void> push(MessageRequest.Push request) {
         
         var serverSentMessage = ServerSentMessage.builder()
             .type("push")
@@ -35,15 +34,8 @@ public class MessagingServiceImpl implements MessagingService {
                 .message(request)
                 .build())
             .build();
-
-        var messageHistory = MessageHistory.builder()
-            .userId(request.userId())
-            .orderId(request.orderId())
-            .message(request.message())
-            .build();
         
-        return messageService.sendEventToClient(request.userId().toString(), serverSentMessage)
-        .then(messageHistoryRepository.save(messageHistory))
-        .thenReturn(EntityDtoMapper.toDto(messageHistory));
+        // 클라이언트에 이벤트만 전송하고 즉시 반환
+        return messageService.sendEventToClient(request.userId().toString(), serverSentMessage);
     }
 }
