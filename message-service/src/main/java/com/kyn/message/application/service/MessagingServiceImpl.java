@@ -11,11 +11,8 @@ import com.kyn.message.application.repository.MessageHistoryRepository;
 import com.kyn.message.application.service.interfaces.MessageService;
 import com.kyn.message.application.service.interfaces.MessagingService;
 import com.kyn.message.common.dto.MessageDto;
-import com.kyn.message.common.dto.PushRequest;
-import com.kyn.message.messaging.mapper.MessageDtoMapper;
 
 import reactor.core.publisher.Mono;
-import java.util.UUID;
 
 @Service
 public class MessagingServiceImpl implements MessagingService {
