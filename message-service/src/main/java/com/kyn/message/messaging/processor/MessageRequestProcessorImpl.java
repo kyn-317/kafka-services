@@ -38,6 +38,7 @@ public class MessageRequestProcessorImpl implements MessageRequestProcessor{
             .orderId(request.orderId().toString())
             .message(request.message())
             .build();   
+            messageHistory.insertDocument(request.userId().toString());
         
         // 먼저 클라이언트에 이벤트 전송
         return messagingService.push(request)

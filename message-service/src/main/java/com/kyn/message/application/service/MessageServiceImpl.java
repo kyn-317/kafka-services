@@ -97,17 +97,44 @@ public class MessageServiceImpl implements MessageService{
                 .mergeWith(getHeartbeat());
     }
     
+    private Many<ServerSentEvent<String>> createNewSink(String clientId) {
+        Many<ServerSentEvent<String>> sink = Sinks.many().multicast().onBackpressureBuffer();
+        sinkMap.put(clientId, sink);
+        log.info("Created new sink for client {}", clientId);
+        return sink;
+    }
+    
     /**
      * return SSE stream for specific client
      */
     @Override
     public Flux<ServerSentEvent<String>> getEventStreamForClient(String clientId) {
-        Many<ServerSentEvent<String>> clientSink = sinkMap.computeIfAbsent(
-            clientId, id -> Sinks.many().multicast().onBackpressureBuffer()
-        );
+        // 기존 sink 정리
+        Many<ServerSentEvent<String>> oldSink = sinkMap.remove(clientId);
+        if (oldSink != null) {
+            oldSink.tryEmitComplete();
+            log.info("Cleaned up old sink for client {}", clientId);
+        }
         
-        return clientSink.asFlux()
-                .mergeWith(getHeartbeat());
+        // 새로운 sink 생성
+        Many<ServerSentEvent<String>> newSink = createNewSink(clientId);
+        
+        return newSink.asFlux()
+                .mergeWith(getHeartbeat())
+                .doOnSubscribe(subscription -> 
+                    log.info("Client {} subscribed to stream", clientId))
+                .doOnCancel(() -> {
+                    log.info("Client {} connection cancelled", clientId);
+                    removeClient(clientId);
+                })
+                .doOnError(error -> {
+                    log.error("Error in client {} stream: {}", clientId, error.getMessage());
+                    removeClient(clientId);
+                })
+                .doOnComplete(() -> {
+                    log.info("Client {} stream completed", clientId);
+                    removeClient(clientId);
+                });
     }
     
     /**
@@ -127,8 +154,11 @@ public class MessageServiceImpl implements MessageService{
      */
     @Override
     public void removeClient(String clientId) {
-        sinkMap.remove(clientId);
-        log.info("client {} disconnected", clientId);
+        Many<ServerSentEvent<String>> sink = sinkMap.remove(clientId);
+        if (sink != null) {
+            sink.tryEmitComplete();
+            log.info("Client {} sink completed and removed", clientId);
+        }
     }
 
 }
