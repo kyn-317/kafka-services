@@ -12,7 +12,6 @@ import com.kyn.common.messages.message.MessageRequest;
 import com.kyn.common.publisher.EventPublisher;
 import com.kyn.order.common.service.MessageEventListener;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 

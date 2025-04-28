@@ -2,9 +2,14 @@ package com.kyn.message.application.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.kyn.common.messages.Request;
 import com.kyn.common.messages.message.MessageRequest;
 import com.kyn.message.application.dto.MessageData;
 import com.kyn.message.application.dto.ServerSentMessage;
@@ -63,7 +68,7 @@ public class MessageController {
     @PostMapping("/publish/{clientId}")
     public Mono<Void> publishEventToClient(
             @PathVariable String clientId,
-            @RequestBody MessageRequest request) {
+            @RequestBody MessageRequest.Push request) {
         log.info("Client {} publish event request: {}", clientId, request);
         var serverSentMessage = ServerSentMessage.builder()
             .type("push")
