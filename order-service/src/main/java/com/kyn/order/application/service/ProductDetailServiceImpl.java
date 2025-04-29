@@ -13,24 +13,26 @@ import com.kyn.common.dto.CartResponse;
 import com.kyn.common.dto.ProductBasDto;
 import com.kyn.order.application.service.interfaces.ProductDetailService;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 public class ProductDetailServiceImpl implements ProductDetailService {
 
-    private final WebClient webClient;
+    private final WebClient productServiceWebClient;
 
     private final RMapCacheReactive<String, ProductBasDto> productBasMap;
 
-    public ProductDetailServiceImpl(WebClient webClient, RedissonClient redissonClient) {
-        this.webClient = webClient;
+    public ProductDetailServiceImpl(WebClient productServiceWebClient, RedissonClient redissonClient) {
+        this.productServiceWebClient = productServiceWebClient;
         this.productBasMap = redissonClient.reactive().getMapCache("product:id");
     }
     @Override
     public Mono<CartResponse> getCart(String email) {
-        return this.webClient.get()
-            .uri("/getCartByEmail/{email}", email)
+        return this.productServiceWebClient.get()
+            .uri("getCartByEmail/{email}", email)
             .retrieve()
             .bodyToMono(CartResponse.class);
     }
@@ -40,8 +42,8 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         return
         this.productBasMap.get(productId)
         .switchIfEmpty(
-            this.webClient.get()
-            .uri("/findProductById/{productId}", productId)
+            this.productServiceWebClient.get()
+            .uri("findProductById/{productId}", productId)
             .retrieve()
             .bodyToMono(ProductBasDto.class)
         );
@@ -52,12 +54,14 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         List<String> productIds = cartItems.stream()
         .map(CartItem::productId)
         .collect(Collectors.toList());
+        log.info("productIds: {}", productIds);
 
-        return this.webClient.post()
-        .uri("/findProductsByIds")
+        return this.productServiceWebClient.post()
+        .uri("findProductByIds")
         .bodyValue(productIds)
         .retrieve()
-        .bodyToFlux(ProductBasDto.class);
+        .bodyToFlux(ProductBasDto.class)
+        .doOnError(error -> log.error("error: {}", error));
 
     }
 

@@ -30,3 +30,6 @@ spring:
     url: r2dbc:postgresql://localhost:5432/kynpost
     username: kynpostgres
     password: kynpostgrespw
+  sql:
+    init:
+      mode: always

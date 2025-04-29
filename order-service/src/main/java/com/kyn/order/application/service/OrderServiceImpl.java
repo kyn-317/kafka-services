@@ -1,10 +1,11 @@
 package com.kyn.order.application.service;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
 
+import com.kyn.order.application.entity.OrderDetail;
 import com.kyn.order.application.mapper.CartMapper;
 import com.kyn.order.application.mapper.EntityDtoMapper;
 import com.kyn.order.application.repository.OrderDetailRepository;
@@ -21,11 +22,12 @@ import com.kyn.order.common.service.OrderService;
 import com.kyn.order.common.service.WorkflowActionRetriever;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-@RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     private final PurchaseOrderRepository repository;
@@ -34,6 +36,16 @@ public class OrderServiceImpl implements OrderService {
     private final ProductDetailService productDetailService;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
+
+    public OrderServiceImpl(PurchaseOrderRepository repository, OrderEventListener eventListener, WorkflowActionRetriever actionRetriever,
+     ProductDetailService productDetailService, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository) {
+        this.repository = repository;
+        this.eventListener = eventListener;
+        this.actionRetriever = actionRetriever;
+        this.productDetailService = productDetailService;
+        this.orderRepository = orderRepository;
+        this.orderDetailRepository = orderDetailRepository;
+    }
 
     @Override
     public Mono<PurchaseOrderDto> placeOrder(OrderCreateRequest request) {
@@ -68,12 +80,20 @@ public class OrderServiceImpl implements OrderService {
 
     private Mono<OrderSummary> placeOrder(OrderByCart cart) {
      // Order create
-        return this.orderRepository.save(CartMapper.toOrder(cart.cart(), cart.customerId().toString()))
-        .flatMap(savedOrder -> 
-            this.orderDetailRepository.saveAll(cart.cart().cartItems().stream()
-            .map(cartItem -> CartMapper.toOrderDetail(cartItem, savedOrder.getOrderId()))
-            .collect(Collectors.toList())).collectList()
-            .map(savedDetails -> CartMapper.toOrderSummary(savedOrder, savedDetails))
-    );
+     var order = CartMapper.toOrder(cart.cart(), cart.customerId().toString());
+     order.insertDocument(cart.cart().email());
+        return this.orderRepository.save(order)
+        .flatMap(savedOrder -> { 
+        List<OrderDetail> orderDetails = cart.cart().cartItems().stream()
+        .map(cartItem -> {
+            var orderDetail = CartMapper.toOrderDetail(cartItem, savedOrder.getOrderId());
+            orderDetail.insertDocument(savedOrder.getOrderId().toString());
+            log.info("orderDetail: {}", orderDetail);
+            return orderDetail;
+        })
+        .collect(Collectors.toList());
+        return this.orderDetailRepository.saveAll(orderDetails).collectList()
+            .map(savedDetails -> CartMapper.toOrderSummary(savedOrder, savedDetails));
+        });
     }
 }
