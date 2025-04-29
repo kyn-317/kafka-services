@@ -28,10 +28,7 @@ public class MessageRequestProcessorImpl implements MessageRequestProcessor{
 
     @Override   
     public Mono<MessageResponse> handle(MessageRequest.Push request) {
-        log.info("message service received message from OrderService: \norderId={}, userId={}, message='{}'", 
-            request.orderId(), request.userId(), request.message()); 
-            
-        // 메시지 히스토리 객체 생성
+        // initialize message history
         var messageHistory = MessageHistory.builder()
             ._id(UUID.randomUUID().toString())
             .userId(request.userId().toString())
@@ -40,7 +37,7 @@ public class MessageRequestProcessorImpl implements MessageRequestProcessor{
             .build();   
             messageHistory.insertDocument(request.userId().toString());
         
-        // 먼저 클라이언트에 이벤트 전송
+        // send message to client
         return messagingService.push(request)
             .then(Mono.defer(() -> messageHistoryRepository.save(messageHistory)
                 .doOnSuccess(savedMessageHistory -> log.info("Message history saved: {}", savedMessageHistory))

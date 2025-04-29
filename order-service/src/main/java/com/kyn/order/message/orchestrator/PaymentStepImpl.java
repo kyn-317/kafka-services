@@ -1,4 +1,9 @@
-package com.kyn.order.message.orchestrator.impl;
+package com.kyn.order.message.orchestrator;
+
+import java.util.UUID;
+
+import org.reactivestreams.Publisher;
+import org.springframework.stereotype.Service;
 
 import com.kyn.common.messages.Request;
 import com.kyn.common.messages.payment.PaymentResponse;
@@ -8,12 +13,9 @@ import com.kyn.order.common.enums.WorkflowAction;
 import com.kyn.order.common.service.OrderFulfillmentService;
 import com.kyn.order.common.service.WorkflowActionTracker;
 import com.kyn.order.message.mapper.MessageDtoMapper;
-import com.kyn.order.message.orchestrator.PaymentStep;
-import lombok.RequiredArgsConstructor;
-import org.reactivestreams.Publisher;
-import org.springframework.stereotype.Service;
+import com.kyn.order.message.orchestrator.interfaces.PaymentStep;
 
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

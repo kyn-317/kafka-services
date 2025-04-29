@@ -1,13 +1,13 @@
-package com.kyn.order.message.orchestrator.impl;
+package com.kyn.order.message.orchestrator;
 
 import com.kyn.common.messages.Request;
 import com.kyn.common.messages.inventory.InventoryResponse;
 import com.kyn.common.messages.payment.PaymentResponse;
 import com.kyn.common.publisher.EventPublisher;
 import com.kyn.order.common.service.OrderFulfillmentService;
-import com.kyn.order.message.orchestrator.InventoryStep;
-import com.kyn.order.message.orchestrator.OrderFulfillmentOrchestrator;
-import com.kyn.order.message.orchestrator.PaymentStep;
+import com.kyn.order.message.orchestrator.interfaces.InventoryStep;
+import com.kyn.order.message.orchestrator.interfaces.OrderFulfillmentOrchestrator;
+import com.kyn.order.message.orchestrator.interfaces.PaymentStep;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.reactivestreams.Publisher;

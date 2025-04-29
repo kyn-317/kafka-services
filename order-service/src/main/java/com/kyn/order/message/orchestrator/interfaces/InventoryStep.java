@@ -1,9 +1,10 @@
-package com.kyn.order.message.orchestrator;
+package com.kyn.order.message.orchestrator.interfaces;
+
+import org.reactivestreams.Publisher;
 
 import com.kyn.common.messages.Request;
 import com.kyn.common.messages.inventory.InventoryResponse;
 import com.kyn.common.orchestrator.WorkFlowStep;
-import org.reactivestreams.Publisher;
 
 public interface InventoryStep extends WorkFlowStep<InventoryResponse> {
 

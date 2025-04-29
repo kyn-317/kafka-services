@@ -1,11 +1,13 @@
-package com.kyn.order.message.orchestrator;
+package com.kyn.order.message.orchestrator.interfaces;
+
+import org.reactivestreams.Publisher;
 
 import com.kyn.common.messages.Request;
 import com.kyn.common.messages.Response;
 import com.kyn.common.messages.inventory.InventoryResponse;
 import com.kyn.common.messages.payment.PaymentResponse;
 import com.kyn.common.orchestrator.WorkFlowOrchestrator;
-import org.reactivestreams.Publisher;
+
 import reactor.core.publisher.Mono;
 
 public interface OrderFulfillmentOrchestrator extends WorkFlowOrchestrator {
