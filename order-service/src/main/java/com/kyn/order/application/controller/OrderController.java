@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kyn.order.common.dto.OrderByCart;
 import com.kyn.order.common.dto.OrderCreateRequest;
 import com.kyn.order.common.dto.OrderDetails;
+import com.kyn.order.common.dto.OrderSummary;
 import com.kyn.order.common.dto.PurchaseOrderDto;
 import com.kyn.order.common.service.OrderService;
 
@@ -29,6 +31,13 @@ public class OrderController {
     @PostMapping
     public Mono<ResponseEntity<PurchaseOrderDto>> placeOrder(@RequestBody Mono<OrderCreateRequest> mono) {
         return mono.flatMap(this.service::placeOrder)
+                   .map(ResponseEntity.accepted()::body);
+    }
+
+
+    @PostMapping("byCart")
+    public Mono<ResponseEntity<OrderSummary>> placeOrderByCart(@RequestBody Mono<OrderByCart> mono) {
+        return mono.flatMap(this.service::placeOrderByCart)
                    .map(ResponseEntity.accepted()::body);
     }
 
