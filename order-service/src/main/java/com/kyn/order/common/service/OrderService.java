@@ -2,6 +2,7 @@ package com.kyn.order.common.service;
 
 import java.util.UUID;
 
+import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.order.common.dto.OrderByCart;
 import com.kyn.order.common.dto.OrderCreateRequest;
 import com.kyn.order.common.dto.OrderDetails;
@@ -19,5 +20,5 @@ public interface OrderService {
 
     Mono<OrderDetails> getOrderDetails(UUID orderId);
 
-    Mono<OrderSummary> placeOrderByCart(OrderByCart cart);
+    Mono<OrderSummaryDto> placeOrderByCart(OrderByCart cart);
 }

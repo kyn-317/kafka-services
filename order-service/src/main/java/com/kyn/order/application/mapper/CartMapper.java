@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import com.kyn.common.dto.CartItem;
 import com.kyn.common.dto.CartResponse;
+import com.kyn.common.dto.OrderDetailDto;
+import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.common.dto.ProductBasDto;
 import com.kyn.order.application.entity.Order;
 import com.kyn.order.application.entity.OrderDetail;
@@ -71,13 +73,20 @@ public class CartMapper {
         .build();
     }
 
-    public static OrderSummary toOrderSummary(Order order, List<OrderDetail> orderDetails) {
-        return OrderSummary.builder()
+    public static OrderSummaryDto toOrderSummary(Order order, List<OrderDetail> orderDetails) {
+        return OrderSummaryDto.builder()
         .orderId(order.getOrderId())
         .customerId(order.getCustomerId())
         .totalPrice(order.getTotalPrice())
-        .status(order.getStatus())
-        .orderDetails(orderDetails)
+        .orderDetails(orderDetails.stream().map(CartMapper::toOrderDetailDto).collect(Collectors.toList()))
+        .build();
+    }
+
+    private static OrderDetailDto toOrderDetailDto(OrderDetail orderDetail) {
+        return OrderDetailDto.builder()
+        .orderDetailId(orderDetail.getOrderDetailId())
+        .orderId(orderDetail.getOrderId())
+        .productId(orderDetail.getProductId())
         .build();
     }
 }

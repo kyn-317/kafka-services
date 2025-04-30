@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
+import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.order.application.entity.OrderDetail;
 import com.kyn.order.application.mapper.CartMapper;
 import com.kyn.order.application.mapper.EntityDtoMapper;
@@ -17,11 +18,10 @@ import com.kyn.order.common.dto.OrderCreateRequest;
 import com.kyn.order.common.dto.OrderDetails;
 import com.kyn.order.common.dto.OrderSummary;
 import com.kyn.order.common.dto.PurchaseOrderDto;
+import com.kyn.order.common.service.CartEventListener;
 import com.kyn.order.common.service.OrderEventListener;
 import com.kyn.order.common.service.OrderService;
 import com.kyn.order.common.service.WorkflowActionRetriever;
-
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,15 +36,17 @@ public class OrderServiceImpl implements OrderService {
     private final ProductDetailService productDetailService;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
+    private final CartEventListener cartEventListener;
 
     public OrderServiceImpl(PurchaseOrderRepository repository, OrderEventListener eventListener, WorkflowActionRetriever actionRetriever,
-     ProductDetailService productDetailService, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository) {
+     ProductDetailService productDetailService, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, CartEventListener cartEventListener) {
         this.repository = repository;
         this.eventListener = eventListener;
         this.actionRetriever = actionRetriever;
         this.productDetailService = productDetailService;
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
+        this.cartEventListener = cartEventListener;
     }
 
     @Override
@@ -70,15 +72,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Mono<OrderSummary> placeOrderByCart(OrderByCart cart) {
+    public Mono<OrderSummaryDto> placeOrderByCart(OrderByCart cart) {
         var customerId = cart.customerId().toString();
         return productDetailService.getCartByCartId(cart.cart().cartItems()).collectList()
             .map(productBasDtos -> CartMapper.toCartResponse(cart, productBasDtos))
             .map( item -> OrderByCart.builder().customerId(UUID.fromString(customerId)).cart(item).build())
-            .flatMap(this::placeOrder);
+            .flatMap(this::placeOrder)
+            .doOnNext(cartEventListener::emitOrderCreated);
     }
 
-    private Mono<OrderSummary> placeOrder(OrderByCart cart) {
+    private Mono<OrderSummaryDto> placeOrder(OrderByCart cart) {
      // Order create
      var order = CartMapper.toOrder(cart.cart(), cart.customerId().toString());
      order.insertDocument(cart.cart().email());
