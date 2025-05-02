@@ -1,8 +1,6 @@
 package com.kyn.order.message.publisher;
 
 import java.time.Duration;
-import java.util.EventListener;
-import java.util.UUID;
 
 import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.common.publisher.EventPublisher;
@@ -13,20 +11,20 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
 @RequiredArgsConstructor
-public class CartEventListenerImpl implements CartEventListener, EventPublisher<UUID> {
+public class CartEventListenerImpl implements CartEventListener, EventPublisher<OrderSummaryDto> {
     
-        private final Sinks.Many<UUID> sink;
-        private final Flux<UUID> flux;
+        private final Sinks.Many<OrderSummaryDto> sink;
+        private final Flux<OrderSummaryDto> flux;
     
         @Override
-        public Flux<UUID> publish() {
+        public Flux<OrderSummaryDto> publish() {
             return this.flux;
         }
     
         @Override
         public void emitOrderCreated(OrderSummaryDto dto) {
             this.sink.emitNext(
-                    dto.getOrderId(),
+                    dto,
                     Sinks.EmitFailureHandler.busyLooping(Duration.ofSeconds(1))
             );
         }
