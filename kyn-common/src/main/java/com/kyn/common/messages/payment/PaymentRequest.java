@@ -1,9 +1,11 @@
 package com.kyn.common.messages.payment;
 
-import com.kyn.common.messages.Request;
-import lombok.Builder;
-
 import java.util.UUID;
+
+import com.kyn.common.dto.OrderSummaryDto;
+import com.kyn.common.messages.Request;
+
+import lombok.Builder;
 
 public sealed interface PaymentRequest extends Request {
 
@@ -15,6 +17,12 @@ public sealed interface PaymentRequest extends Request {
 
     @Builder
     record Refund(UUID orderId) implements PaymentRequest {
+    }
+
+    @Builder
+    record CartProcess(UUID orderId,
+                UUID customerId,
+                OrderSummaryDto orderSummary) implements PaymentRequest {
     }
 
 }
