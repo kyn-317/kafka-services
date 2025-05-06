@@ -13,6 +13,7 @@ public interface InventoryStep extends WorkFlowStep<InventoryResponse> {
         return switch (response){
             case InventoryResponse.Deducted r -> this.onSuccess(r);
             case InventoryResponse.Declined r -> this.onFailure(r);
+            case InventoryResponse.DeductedCart r -> this.onSuccessCart(r);
         };
     }
 
@@ -20,4 +21,5 @@ public interface InventoryStep extends WorkFlowStep<InventoryResponse> {
 
     Publisher<Request> onFailure(InventoryResponse.Declined response);
 
+    Publisher<Request> onSuccessCart(InventoryResponse.DeductedCart response);
 }

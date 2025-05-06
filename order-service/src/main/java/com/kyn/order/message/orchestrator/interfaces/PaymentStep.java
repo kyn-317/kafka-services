@@ -13,6 +13,7 @@ public interface PaymentStep extends WorkFlowStep<PaymentResponse> {
         return switch (response){
             case PaymentResponse.Processed r -> this.onSuccess(r);
             case PaymentResponse.Declined r -> this.onFailure(r);
+            case PaymentResponse.Pending r -> this.onSuccessCart(r);
         };
     }
 
@@ -20,4 +21,5 @@ public interface PaymentStep extends WorkFlowStep<PaymentResponse> {
 
     Publisher<Request> onFailure(PaymentResponse.Declined response);
 
+    Publisher<Request> onSuccessCart(PaymentResponse.Pending response);
 }
