@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.kyn.common.messages.Request;
 import com.kyn.common.messages.payment.PaymentResponse;
-import com.kyn.common.messages.payment.PaymentResponse.Pending;
 import com.kyn.common.orchestrator.RequestCompensator;
 import com.kyn.common.orchestrator.RequestSender;
 import com.kyn.order.common.enums.WorkflowAction;
@@ -55,18 +54,11 @@ public class PaymentStepImpl implements PaymentStep {
     public Publisher<Request> onSuccess(PaymentResponse.Processed response) {
         return this.tracker.track(response.orderId(), WorkflowAction.PAYMENT_PROCESSED)
                            .thenMany(this.nextStep.send(response.orderId()));
-        // also Mono.from(...) can be used if we know for sure it is going to be only one request
     }
 
     @Override
     public Publisher<Request> onFailure(PaymentResponse.Declined response) {
         return this.tracker.track(response.orderId(), WorkflowAction.PAYMENT_DECLINED)
                            .thenMany(this.previousStep.compensate(response.orderId()));
-    }
-
-    @Override
-    public Publisher<Request> onSuccessCart(Pending response) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onSuccessCart'");
     }
 }

@@ -19,10 +19,5 @@ public sealed interface PaymentRequest extends Request {
     record Refund(UUID orderId) implements PaymentRequest {
     }
 
-    @Builder
-    record CartProcess(UUID orderId,
-                UUID customerId,
-                OrderSummaryDto orderSummary) implements PaymentRequest {
-    }
 
 }

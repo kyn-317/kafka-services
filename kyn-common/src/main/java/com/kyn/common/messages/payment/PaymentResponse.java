@@ -16,14 +16,6 @@ public sealed interface PaymentResponse extends Response {
                      Integer amount) implements PaymentResponse {
 
     }
-
-    @Builder
-    record Pending(UUID orderId,
-                  UUID paymentId,
-                  UUID customerId,
-                  OrderSummaryDto orderSummary) implements PaymentResponse {
-
-    }
     
     @Builder
     record Declined(UUID orderId,

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.kyn.common.messages.Request;
 import com.kyn.common.messages.inventory.InventoryResponse;
-import com.kyn.common.messages.inventory.InventoryResponse.DeductedCart;
 import com.kyn.common.orchestrator.RequestCompensator;
 import com.kyn.common.orchestrator.RequestSender;
 import com.kyn.order.common.enums.WorkflowAction;
@@ -62,11 +61,5 @@ public class InventoryStepImpl implements InventoryStep {
     public Publisher<Request> onFailure(InventoryResponse.Declined response) {
         return this.tracker.track(response.orderId(), WorkflowAction.INVENTORY_DECLINED)
                            .thenMany(this.previousStep.compensate(response.orderId()));
-    }
-
-    @Override
-    public Publisher<Request> onSuccessCart(DeductedCart response) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onSuccessCart'");
     }
 }
