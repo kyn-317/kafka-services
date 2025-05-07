@@ -1,5 +1,6 @@
 package com.kyn.order.application.mapper;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import com.kyn.order.common.dto.OrderByCart;
 import com.kyn.order.common.dto.OrderDto;
 import com.kyn.order.common.dto.OrderWorkflowActionDto;
 import com.kyn.order.common.enums.OrderStatus;
+import com.kyn.order.common.enums.WorkflowAction;
 
 public class CartMapper {
     
@@ -117,5 +119,22 @@ public class CartMapper {
         .order(order)
         .actions(actions)
         .build();
+    }
+
+        public static OrderWorkFlowAction toOrderWorkflowAction(UUID orderId, WorkflowAction action) {
+        return OrderWorkFlowAction.builder()
+                                  .orderId(orderId)
+                                  .action(action)
+                                  .createdAt(Instant.now())
+                                  .build();
+    }
+
+    public static OrderWorkflowActionDto toOrderWorkflowActionDto(OrderWorkFlowAction orderWorkflowAction) {
+        return OrderWorkflowActionDto.builder()
+                                     .id(orderWorkflowAction.getId())
+                                     .orderId(orderWorkflowAction.getOrderId())
+                                     .createdAt(orderWorkflowAction.getCreatedAt())
+                                     .action(orderWorkflowAction.getAction())
+                                     .build();
     }
 }
