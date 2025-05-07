@@ -6,5 +6,5 @@ import com.kyn.common.messages.CartRequest;
 import com.kyn.common.messages.CartResponse;
 
 public interface CartWorkflowOrchestrator {
-    Publisher<CartRequest> orchestrater(CartResponse response);
+    Publisher<CartRequest> orchestrate(CartResponse response);
 }

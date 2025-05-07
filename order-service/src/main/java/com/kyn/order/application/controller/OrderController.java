@@ -16,6 +16,7 @@ import com.kyn.order.common.dto.OrderCreateRequest;
 import com.kyn.order.common.dto.OrderDetails;
 import com.kyn.order.common.dto.OrderSummary;
 import com.kyn.order.common.dto.PurchaseOrderDto;
+import com.kyn.order.common.service.CartOrderService;
 import com.kyn.order.common.service.OrderService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import reactor.core.publisher.Mono;
 public class OrderController {
 
     private final OrderService service;
+    private final CartOrderService cartOrderService;
 
     @PostMapping
     public Mono<ResponseEntity<PurchaseOrderDto>> placeOrder(@RequestBody Mono<OrderCreateRequest> mono) {
@@ -38,7 +40,7 @@ public class OrderController {
 
     @PostMapping("byCart")
     public Mono<ResponseEntity<OrderSummaryDto>> placeOrderByCart(@RequestBody Mono<OrderByCart> mono) {
-        return mono.flatMap(this.service::placeOrderByCart)
+        return mono.flatMap(this.cartOrderService::placeOrderByCart)
                    .map(ResponseEntity.accepted()::body);
     }
 
