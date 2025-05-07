@@ -13,8 +13,12 @@ import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.common.dto.ProductBasDto;
 import com.kyn.order.application.entity.Order;
 import com.kyn.order.application.entity.OrderDetail;
+import com.kyn.order.application.entity.OrderWorkFlowAction;
+import com.kyn.order.common.dto.CartOrderDetails;
+import com.kyn.order.common.dto.CartOrderWorkflowActionDto;
 import com.kyn.order.common.dto.OrderByCart;
-import com.kyn.order.common.dto.OrderSummary;
+import com.kyn.order.common.dto.OrderDto;
+import com.kyn.order.common.dto.OrderWorkflowActionDto;
 import com.kyn.order.common.enums.OrderStatus;
 
 public class CartMapper {
@@ -87,6 +91,31 @@ public class CartMapper {
         .orderDetailId(orderDetail.getOrderDetailId())
         .orderId(orderDetail.getOrderId())
         .productId(orderDetail.getProductId())
+        .build();
+    }
+
+    public static OrderDto toOrderDto(Order order) {
+        return OrderDto.builder()
+        .orderId(order.getOrderId())
+        .customerId(order.getCustomerId())
+        .totalPrice(order.getTotalPrice())
+        .status(order.getStatus())
+        .build();
+    }
+
+    public static CartOrderWorkflowActionDto toCartOrderWorkflowActionDto(OrderWorkFlowAction orderWorkflowAction) {
+        return CartOrderWorkflowActionDto.builder()
+        .id(orderWorkflowAction.getId())
+        .orderId(orderWorkflowAction.getOrderId())
+        .createdAt(orderWorkflowAction.getCreatedAt())
+        .action(orderWorkflowAction.getAction())
+        .build();
+    }
+
+    public static CartOrderDetails toCartOrderDetails(OrderDto order, List<CartOrderWorkflowActionDto> actions) {
+        return CartOrderDetails.builder()
+        .order(order)
+        .actions(actions)
         .build();
     }
 }

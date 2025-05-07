@@ -1,9 +1,5 @@
 package com.kyn.common.messages.payment;
 
-import java.util.UUID;
-
-import org.springframework.core.annotation.Order;
-
 import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.common.messages.CartRequest;
 
@@ -13,11 +9,11 @@ public sealed interface CartPaymentRequest extends CartRequest {
     
 
     @Builder
-    record Process(OrderSummaryDto orderSummary) implements CartPaymentRequest {
+    record Process(OrderSummaryDto requestItem) implements CartPaymentRequest {
     }
 
     @Builder
-    record Refund(OrderSummaryDto orderSummary) implements CartPaymentRequest {
+    record Refund(OrderSummaryDto requestItem) implements CartPaymentRequest {
     }
 
 }

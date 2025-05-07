@@ -2,7 +2,6 @@ package com.kyn.common.messages.payment;
 
 import java.util.UUID;
 
-import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.common.messages.Request;
 
 import lombok.Builder;

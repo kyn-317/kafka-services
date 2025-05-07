@@ -10,15 +10,14 @@ import lombok.Builder;
 public sealed interface CartInventoryResponse extends CartResponse {
     
     @Builder
-    record Deducted(OrderSummaryDto orderSummary
-    ,UUID inventoryId) implements CartInventoryResponse {
+    record Deducted(OrderSummaryDto responseItem
+    ,UUID cartId) implements CartInventoryResponse {
 
     }
 
     @Builder
-    record Declined(OrderSummaryDto orderSummary
-    ,UUID InventoryId) implements CartInventoryResponse {
-
+    record Declined(OrderSummaryDto responseItem
+    ,UUID cartId) implements CartInventoryResponse {
     }
 
 }

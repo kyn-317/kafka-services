@@ -10,12 +10,12 @@ import lombok.Builder;
 public sealed interface CartPaymentResponse extends CartResponse {
     
     @Builder
-    record Processed(OrderSummaryDto orderSummary,
+    record Processed(OrderSummaryDto responseItem,
                     UUID paymentId) implements CartPaymentResponse {
     }
 
     @Builder
-    record Declined(OrderSummaryDto orderSummary,
+    record Declined(OrderSummaryDto responseItem,
                     String message) implements CartPaymentResponse {
     }
 }

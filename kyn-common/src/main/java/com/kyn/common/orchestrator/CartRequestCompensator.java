@@ -1,12 +1,12 @@
 package com.kyn.common.orchestrator;
 
-import com.kyn.common.messages.Request;
 import org.reactivestreams.Publisher;
 
 import com.kyn.common.dto.OrderSummaryDto;
+import com.kyn.common.messages.CartRequest;
 
 public interface CartRequestCompensator {
 
-    Publisher<Request> compensate(OrderSummaryDto dto);
+    Publisher<CartRequest> compensate(OrderSummaryDto dto);
 
 }
