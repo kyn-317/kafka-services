@@ -2,13 +2,32 @@ spring:
   application:
     name: inventory-service
   r2dbc:
-    url: r2dbc:h2:mem:///inventorydb
+    url: r2dbc:h2:mem:///inventorydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
-    password:
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema.sql
+    password: ''
+  cloud:
+    function:
+      definition: processor
+    stream:
+      default:
+        producer:
+          useNativeEncoding: true
+      bindings:
+        processor-in-0:
+          destination: inventory-request
+          group: inventory-service-group
+        processor-out-0:
+          destination: inventory-response
+      kafka:
+        binder:
+          consumer-properties:
+            "value.deserializer": org.springframework.kafka.support.serializer.JsonDeserializer
+            "key.deserializer": org.apache.kafka.common.serialization.StringDeserializer
+            "auto.offset.reset": "earliest"
+            "spring.json.trusted.packages": "com.kyn.common.messages.*"
+          producer-properties:
+            "value.serializer": org.springframework.kafka.support.serializer.JsonSerializer
+            "key.serializer": org.apache.kafka.common.serialization.StringSerializer
 
 server:
   port: 8082 

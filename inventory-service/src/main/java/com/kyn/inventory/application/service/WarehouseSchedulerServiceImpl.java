@@ -1,7 +1,6 @@
 package com.kyn.inventory.application.service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -47,7 +46,7 @@ public class WarehouseSchedulerServiceImpl implements WarehouseSchedulerService 
             .collectList()
             //  set base stock
             .flatMap(savedHistories -> 
-                warehouseRepository.findDailyStockSummary()
+                warehouseRepository.findDailyStockSummary(yesterdayStr)
                     .map(EntityDtoMapper::setBaseStock)
                     .flatMap(warehouseRepository::save)
                     .collectList()

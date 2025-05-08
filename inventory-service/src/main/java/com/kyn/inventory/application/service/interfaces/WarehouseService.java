@@ -18,7 +18,7 @@ public interface WarehouseService {
 
     Mono<CurrentStock> findCurrentStockWithDetails(WarehouseSearch request);
 
-    Flux<CurrentStock> findDailyStockSummary();
+    Flux<CurrentStock> findDailyStockSummary(String snapshotDate);
     
     Flux<WarehouseDto> findByProductIdAndSnapshotDate(WarehouseSearch request);
     

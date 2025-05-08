@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
 
 import com.kyn.inventory.application.dto.CurrentStock;
 import com.kyn.inventory.application.entity.Warehouse;
@@ -12,13 +13,13 @@ import com.kyn.inventory.application.enums.StorageRetrievalType;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Repository
 public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, UUID> {
     
     @Query("""
         WITH current_stock AS (
             SELECT 
                 product_id,
-                snapshot_date,
                 SUM(CASE 
                     WHEN storage_retrieval_type = 'BASE' THEN amount
                     WHEN storage_retrieval_type = 'RECEIVING' THEN amount
@@ -28,14 +29,14 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
                 END) as current_stock
             FROM warehouse
             WHERE product_id = :productId
-            AND storage_retrieval_type IN ('BASE', 'RECEIVING', 'RETRIEVAL', 'RECEIVING_CANCEL', 'RETRIEVAL_CANCEL')
-            GROUP BY product_id, snapshot_date
+
+            GROUP BY product_id
         )
         SELECT 
             w.*,
             cs.current_stock
         FROM warehouse w
-        JOIN current_stock cs ON w.product_id = cs.product_id AND w.snapshot_date = cs.snapshot_date
+        JOIN current_stock cs ON w.product_id = cs.product_id
         WHERE w.product_id = :productId
     """)
     Mono<CurrentStock> findCurrentStockWithDetails(UUID productId);
@@ -51,11 +52,11 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
                 WHEN storage_retrieval_type = 'RETRIEVAL_CANCEL' THEN amount
             END) as current_stock
         FROM warehouse
-        WHERE storage_retrieval_type IN ('BASE', 'RECEIVING', 'RETRIEVAL')
-        GROUP BY product_id, snapshot_date
+        WHERE snapshot_date = :snapshotDate
+        GROUP BY product_id
         ORDER BY product_id
     """)
-    Flux<CurrentStock> findDailyStockSummary();
+    Flux<CurrentStock> findDailyStockSummary(String snapshotDate);
 
     Flux<Warehouse> findByProductIdAndSnapshotDate(UUID productId, String snapshotDate);
     

@@ -1,4 +1,4 @@
-package com.kyn.inventory.common.mapper;
+package com.kyn.inventory.messaging.mapper;
 
 import java.util.function.Function;
 

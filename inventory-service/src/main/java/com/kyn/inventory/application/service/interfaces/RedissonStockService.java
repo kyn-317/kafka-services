@@ -42,5 +42,5 @@ public interface RedissonStockService {
     /**
      * Refresh cache for all products.
      */
-    Flux<String> refreshAllCache();
+    Flux<String> refreshAllCache(boolean isDaily);
 }

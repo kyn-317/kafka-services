@@ -8,8 +8,8 @@ import com.kyn.common.exception.EventAlreadyProcessedException;
 import com.kyn.common.messages.inventory.CartInventoryRequest.Deduct;
 import com.kyn.common.messages.inventory.CartInventoryRequest.Restore;
 import com.kyn.common.messages.inventory.CartInventoryResponse;
-import com.kyn.inventory.common.mapper.MessageDtoMapper;
 import com.kyn.inventory.common.service.CartInventoryService;
+import com.kyn.inventory.messaging.mapper.MessageDtoMapper;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;

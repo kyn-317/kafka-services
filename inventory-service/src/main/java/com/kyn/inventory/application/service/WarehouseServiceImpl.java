@@ -15,17 +15,15 @@ import com.kyn.inventory.application.repository.WarehouseRepository;
 import com.kyn.inventory.application.service.interfaces.WarehouseService;
 import com.kyn.inventory.application.util.FormatUtil;
 
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
+@RequiredArgsConstructor
 public class WarehouseServiceImpl implements WarehouseService {
 
     private final WarehouseRepository warehouseRepository;
-
-    public WarehouseServiceImpl(WarehouseRepository warehouseRepository) {
-        this.warehouseRepository = warehouseRepository;
-    }
 
     @Override
     public Mono<Warehouse> deduct(WarehouseRequestDto request) {
@@ -69,8 +67,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    public Flux<CurrentStock> findDailyStockSummary() {
-        return warehouseRepository.findDailyStockSummary();
+    public Flux<CurrentStock> findDailyStockSummary(String snapshotDate) {
+        return warehouseRepository.findDailyStockSummary(snapshotDate);
     }
 
     @Override

@@ -4,12 +4,14 @@ import java.util.UUID;
 
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
 
 import com.kyn.inventory.application.entity.WarehouseHistory;
 import com.kyn.inventory.application.enums.StorageRetrievalType;
 
 import reactor.core.publisher.Flux;
 
+@Repository
 public interface WarehouseHistoryRepository extends ReactiveCrudRepository<WarehouseHistory, UUID> {
     
     Flux<WarehouseHistory> findBySnapshotDateBetweenOrderByCreatedByAsc(String startDate, String endDate);

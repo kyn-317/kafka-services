@@ -24,7 +24,7 @@ public class InventoryRequestProcessorConfig {
     
     private final InventoryRequestProcessor inventoryRequestProcessor;
     @Bean
-    public Function<Flux<Message<CartInventoryRequest>>, Flux<Message<CartInventoryResponse>>> cartInventoryRequestProcessor() {
+    public Function<Flux<Message<CartInventoryRequest>>, Flux<Message<CartInventoryResponse>>> processor() {
         return flux -> flux.map(MessageConverter::toRecord)
                            .doOnNext(r -> log.info("inventory service received {}", r.message()))
                            .concatMap(r -> this.inventoryRequestProcessor.process(r.message())
