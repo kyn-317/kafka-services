@@ -75,10 +75,6 @@ public class InventoryServiceTest extends AbstractIntegrationTest {
         expectNoResponse(request);
 
 
-        var restoreRequest = CartInventoryRequest.Restore.builder()
-        .requestItem(exampleOrder)
-        .build();
-
     }
 
     @Test // please remove this - not a good fit for embedded kafka test. should be covered as part of unit tests

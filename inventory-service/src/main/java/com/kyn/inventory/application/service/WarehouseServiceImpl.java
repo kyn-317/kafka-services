@@ -46,8 +46,15 @@ public class WarehouseServiceImpl implements WarehouseService {
     public Mono<Warehouse> restore(WarehouseRequestDto request) {
         return DuplicateEventValidator.validate(
             this.warehouseRepository.existsByOrderIdAndRetrievalTypeAndProductId(request.orderId(), request.retrievalType().toString(), request.productId()),
-            save(request)
-         );
+            warehouseRepository.findByOrderIdAndProductIdAndRetrievalType(
+                request.orderId(), 
+                request.productId(), 
+                "BASE"
+            )
+            .filter(warehouse -> warehouse.getQuantity() == request.quantity())
+            .switchIfEmpty(Mono.error(new IllegalArgumentException("No matching base retrieval record found")))
+            .flatMap(warehouse -> save(request))
+        );
     }
 
     private Mono<Warehouse> save(WarehouseRequestDto request) {
