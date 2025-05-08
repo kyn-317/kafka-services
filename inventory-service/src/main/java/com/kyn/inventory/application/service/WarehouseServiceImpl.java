@@ -32,7 +32,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     public Mono<Warehouse> deduct(WarehouseRequestDto request) {
         return 
          DuplicateEventValidator.validate(
-            this.warehouseRepository.existsByOrderIdAndRetrievalType(request.orderId(), request.retrievalType().toString()),
+            this.warehouseRepository.existsByOrderIdAndRetrievalTypeAndProductId(request.orderId(), request.retrievalType().toString(), request.productId()),
             this.warehouseRepository.findCurrentStockWithDetails(request.productId())
          )
          .filter(currentStock -> currentStock.currentStock() >= request.quantity())
@@ -45,7 +45,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public Mono<Warehouse> restore(WarehouseRequestDto request) {
         return DuplicateEventValidator.validate(
-            this.warehouseRepository.existsByOrderIdAndRetrievalType(request.orderId(), request.retrievalType().toString()),
+            this.warehouseRepository.existsByOrderIdAndRetrievalTypeAndProductId(request.orderId(), request.retrievalType().toString(), request.productId()),
             save(request)
          );
     }

@@ -62,15 +62,15 @@ public class InventoryServiceTest extends AbstractIntegrationTest {
         var request = CartInventoryRequest.Deduct.builder()
         .requestItem(exampleOrder)
         .build();
-        expectNoResponse(request);
+//        expectNoResponse(request);
 
-/*         expectResponse(request, CartInventoryResponse.class, res -> {
+        expectResponse(request, CartInventoryResponse.class, res -> {
             Assertions.assertThat(res.responseItem().getOrderId()).isEqualTo(exampleOrder.getOrderId());
             Assertions.assertThat(res.responseItem().getCustomerId()).isEqualTo(exampleOrder.getCustomerId());
             Assertions.assertThat(res.responseItem().getOrderDetails().size()).isEqualTo(exampleOrder.getOrderDetails().size());
             Assertions.assertThat(res.responseItem().getOrderDetails().get(0).getProductId()).isEqualTo(exampleOrder.getOrderDetails().get(0).getProductId());
             Assertions.assertThat(res.responseItem().getOrderDetails().get(0).getQuantity()).isEqualTo(exampleOrder.getOrderDetails().get(0).getQuantity());
-        }); */
+        });
     }
 
     @Test // please remove this - not a good fit for embedded kafka test. should be covered as part of unit tests

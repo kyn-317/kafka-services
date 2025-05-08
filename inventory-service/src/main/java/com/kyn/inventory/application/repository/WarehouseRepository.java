@@ -78,6 +78,6 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
         String endDate
     );
 
-    @Query("SELECT EXISTS(SELECT 1 FROM warehouse WHERE order_id = :orderId AND storage_retrieval_type = :retrievalType)")
-    Mono<Boolean> existsByOrderIdAndRetrievalType(UUID orderId, String retrievalType);
+    @Query("SELECT EXISTS(SELECT 1 FROM warehouse WHERE order_id = :orderId AND storage_retrieval_type = :retrievalType AND product_id = :productId)")
+    Mono<Boolean> existsByOrderIdAndRetrievalTypeAndProductId(UUID orderId, String retrievalType, UUID productId);
 }
