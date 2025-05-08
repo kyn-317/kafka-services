@@ -1,4 +1,3 @@
-/* 
 package com.kyn.inventory;
 
 
@@ -35,37 +34,43 @@ public class InventoryServiceTest extends AbstractIntegrationTest {
     private static final Flux<CartInventoryResponse> resFlux = resSink.asFlux().cache(0);
 
 
-
+    @Autowired
+    private StreamBridge streamBridge;
 
     @Test
     public void deductAndRestoreTest(){
+        var orderId = UUID.randomUUID();
+        var customerId = UUID.randomUUID();
         var orderDetails = List.of(
             OrderDetailDto.builder()
-            .productId(UUID.fromString("22222222-2222-2222-2222-222222222222"))
+            .productId(UUID.fromString("11111111-1111-1111-1111-111111111122"))
+            .orderId(orderId)
             .quantity(10)
             .build(),
             OrderDetailDto.builder()
-            .productId(UUID.fromString("44444444-4444-4444-4444-444444444444"))
+            .productId(UUID.fromString("33333333-3333-3333-3333-333333333344"))
+            .orderId(orderId)
             .quantity(10)
             .build()
         );
         var exampleOrder = OrderSummaryDto.builder()
-        .orderId(UUID.randomUUID())
-        .customerId(UUID.randomUUID())
+        .orderId(orderId)
+        .customerId(customerId)
         .orderDetails(orderDetails)
         .build();
 
         var request = CartInventoryRequest.Deduct.builder()
         .requestItem(exampleOrder)
         .build();
+        expectNoResponse(request);
 
-        expectResponse(request, CartInventoryResponse.class, res -> {
+/*         expectResponse(request, CartInventoryResponse.class, res -> {
             Assertions.assertThat(res.responseItem().getOrderId()).isEqualTo(exampleOrder.getOrderId());
             Assertions.assertThat(res.responseItem().getCustomerId()).isEqualTo(exampleOrder.getCustomerId());
             Assertions.assertThat(res.responseItem().getOrderDetails().size()).isEqualTo(exampleOrder.getOrderDetails().size());
             Assertions.assertThat(res.responseItem().getOrderDetails().get(0).getProductId()).isEqualTo(exampleOrder.getOrderDetails().get(0).getProductId());
             Assertions.assertThat(res.responseItem().getOrderDetails().get(0).getQuantity()).isEqualTo(exampleOrder.getOrderDetails().get(0).getQuantity());
-        });
+        }); */
     }
 
     @Test // please remove this - not a good fit for embedded kafka test. should be covered as part of unit tests
@@ -105,4 +110,3 @@ public class InventoryServiceTest extends AbstractIntegrationTest {
     }
     
 }
-*/

@@ -14,37 +14,38 @@ import com.kyn.inventory.application.mapper.EntityDtoMapper;
 import com.kyn.inventory.application.repository.WarehouseRepository;
 import com.kyn.inventory.application.service.interfaces.WarehouseService;
 import com.kyn.inventory.application.util.FormatUtil;
+import com.kyn.inventory.common.exception.OutOfStockException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WarehouseServiceImpl implements WarehouseService {
 
+    private static final Mono<CurrentStock> OUT_OF_STOCK = Mono.error(new OutOfStockException());
     private final WarehouseRepository warehouseRepository;
-
     @Override
     public Mono<Warehouse> deduct(WarehouseRequestDto request) {
         return 
          DuplicateEventValidator.validate(
-            this.warehouseRepository.existsByOrderIdAndRetrievalType(request.orderId(), request.retrievalType()),
+            this.warehouseRepository.existsByOrderIdAndRetrievalType(request.orderId(), request.retrievalType().toString()),
             this.warehouseRepository.findCurrentStockWithDetails(request.productId())
          )
-        .flatMap(currentStock -> {
-            if (currentStock.currentStock() < request.quantity()) {
-                return Mono.error(new RuntimeException("Insufficient stock"));
-            }
-            return save(request);
-        });
+         .filter(currentStock -> currentStock.currentStock() >= request.quantity())
+         .switchIfEmpty(OUT_OF_STOCK)
+         .flatMap(currentStock -> save(request))
+         .doOnNext(onNext -> log.info("deduct call {}", onNext));
     }
     
 
     @Override
     public Mono<Warehouse> restore(WarehouseRequestDto request) {
         return DuplicateEventValidator.validate(
-            this.warehouseRepository.existsByOrderIdAndRetrievalType(request.orderId(), request.retrievalType()),
+            this.warehouseRepository.existsByOrderIdAndRetrievalType(request.orderId(), request.retrievalType().toString()),
             save(request)
          );
     }
@@ -54,7 +55,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         .productId(request.productId())
         .requesterId(request.requesterId())
         .orderId(request.orderId())
-        .retrievalType(request.retrievalType())
+        .storageRetrievalType(request.retrievalType().toString())
         .quantity(request.quantity())
         .snapshotDate(LocalDateTime.now().format(FormatUtil.DATE_FORMATTER))
         .build();

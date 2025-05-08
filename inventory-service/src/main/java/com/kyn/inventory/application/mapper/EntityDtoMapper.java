@@ -24,7 +24,7 @@ public class EntityDtoMapper {
             .productId(warehouse.getProductId())
             .requesterId(warehouse.getRequesterId())
             .orderId(warehouse.getOrderId())
-            .retrievalType(warehouse.getRetrievalType())
+            .storageRetrievalType(warehouse.getStorageRetrievalType())
             .quantity(warehouse.getQuantity())
             .snapshotDate(warehouse.getSnapshotDate())
             .createdAt(warehouse.getCreatedAt())
@@ -37,7 +37,7 @@ public class EntityDtoMapper {
             .productId(currentStock.productId())
             .quantity(currentStock.currentStock())
             .snapshotDate(currentStock.snapshotDate())
-            .retrievalType(StorageRetrievalType.BASE)
+            .storageRetrievalType(StorageRetrievalType.BASE.toString())
             .createdAt(LocalDateTime.now())
             .createdBy("SYSTEM")
             .build();
@@ -50,7 +50,7 @@ public class EntityDtoMapper {
             warehouseHistory.getProductId(),
             warehouseHistory.getRequesterId(),
             warehouseHistory.getOrderId(),
-            warehouseHistory.getRetrievalType(),
+            StorageRetrievalType.valueOf(warehouseHistory.getStorageRetrievalType()),
             warehouseHistory.getQuantity(),
             warehouseHistory.getSnapshotDate(),
             warehouseHistory.getCreatedAt(),
@@ -64,7 +64,7 @@ public class EntityDtoMapper {
             warehouse.getProductId(),
             warehouse.getRequesterId(),
             warehouse.getOrderId(),
-            warehouse.getRetrievalType(),
+            StorageRetrievalType.valueOf(warehouse.getStorageRetrievalType()),
             warehouse.getQuantity(),
             warehouse.getSnapshotDate(),
             warehouse.getCreatedAt(),

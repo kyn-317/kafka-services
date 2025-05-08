@@ -21,11 +21,11 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
             SELECT 
                 product_id,
                 SUM(CASE 
-                    WHEN storage_retrieval_type = 'BASE' THEN amount
-                    WHEN storage_retrieval_type = 'RECEIVING' THEN amount
-                    WHEN storage_retrieval_type = 'RETRIEVAL' THEN -amount
-                    WHEN storage_retrieval_type = 'RECEIVING_CANCEL' THEN -amount
-                    WHEN storage_retrieval_type = 'RETRIEVAL_CANCEL' THEN amount
+                    WHEN storage_retrieval_type = 'BASE' THEN quantity
+                    WHEN storage_retrieval_type = 'RECEIVING' THEN quantity
+                    WHEN storage_retrieval_type = 'RETRIEVAL' THEN -quantity
+                    WHEN storage_retrieval_type = 'RECEIVING_CANCEL' THEN -quantity
+                    WHEN storage_retrieval_type = 'RETRIEVAL_CANCEL' THEN quantity
                 END) as current_stock
             FROM warehouse
             WHERE product_id = :productId
@@ -45,11 +45,11 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
             product_id,
             snapshot_date,
             SUM(CASE 
-                WHEN storage_retrieval_type = 'BASE' THEN amount
-                WHEN storage_retrieval_type = 'RECEIVING' THEN amount
-                WHEN storage_retrieval_type = 'RETRIEVAL' THEN -amount
-                WHEN storage_retrieval_type = 'RECEIVING_CANCEL' THEN -amount
-                WHEN storage_retrieval_type = 'RETRIEVAL_CANCEL' THEN amount
+                WHEN storage_retrieval_type = 'BASE' THEN quantity
+                WHEN storage_retrieval_type = 'RECEIVING' THEN quantity
+                WHEN storage_retrieval_type = 'RETRIEVAL' THEN -quantity
+                WHEN storage_retrieval_type = 'RECEIVING_CANCEL' THEN -quantity
+                WHEN storage_retrieval_type = 'RETRIEVAL_CANCEL' THEN quantity
             END) as current_stock
         FROM warehouse
         WHERE snapshot_date = :snapshotDate
@@ -78,5 +78,6 @@ public interface WarehouseRepository extends ReactiveCrudRepository<Warehouse, U
         String endDate
     );
 
-    Mono<Boolean> existsByOrderIdAndRetrievalType(UUID orderId, StorageRetrievalType retrievalType);
+    @Query("SELECT EXISTS(SELECT 1 FROM warehouse WHERE order_id = :orderId AND storage_retrieval_type = :retrievalType)")
+    Mono<Boolean> existsByOrderIdAndRetrievalType(UUID orderId, String retrievalType);
 }
