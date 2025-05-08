@@ -12,8 +12,8 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
 
-import com.kyn.common.messages.Request;
-import com.kyn.common.messages.payment.PaymentResponse;
+import com.kyn.common.messages.CartRequest;
+import com.kyn.common.messages.payment.CartPaymentResponse;
 import com.kyn.payment.application.entity.Customer;
 import com.kyn.payment.application.repository.CustomerRepository;
 
@@ -27,8 +27,8 @@ import reactor.test.StepVerifier;
 })
 public class PaymentServiceTest extends AbstractIntegrationTest {
 
-    private static final Sinks.Many<PaymentResponse> resSink = Sinks.many().unicast().onBackpressureBuffer();
-    private static final Flux<PaymentResponse> resFlux = resSink.asFlux().cache(0);
+    private static final Sinks.Many<CartPaymentResponse> resSink = Sinks.many().unicast().onBackpressureBuffer();
+    private static final Flux<CartPaymentResponse> resFlux = resSink.asFlux().cache(0);
 
     @Autowired
     private CustomerRepository repository;
@@ -45,28 +45,32 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
 
         var orderId = UUID.randomUUID();
         var customer = getCustomer("sam@gmail.com");
-        var processRequest = TestDataUtil.createProcessRequest(orderId, customer.getId(), 3);
+        var processRequest = TestDataUtil.createProcessRequest(orderId, customer.getId(), 3.0);
         var refundRequest = TestDataUtil.createRefundRequest(orderId);
-
+        
+        System.out.println("payment >>>>");
         // process payment
-        expectResponse(processRequest, PaymentResponse.Processed.class, e -> {
+        expectResponse(processRequest, CartPaymentResponse.Processed.class, e -> {
             Assertions.assertNotNull(e.paymentId());
-            Assertions.assertEquals(orderId, e.orderId());
-            Assertions.assertEquals(3, e.amount());
+            Assertions.assertEquals(orderId, e.responseItem().getOrderId());
+            Assertions.assertEquals(3.0, e.responseItem().getTotalPrice());
         });
 
+        System.out.println("balance >>>>");
         // check balance
         this.repository.findById(customer.getId())
                        .as(StepVerifier::create)
                        .consumeNextWith(c -> Assertions.assertEquals(97, c.getBalance()))
                        .verifyComplete();
 
+        System.out.println("duplicate >>>>");
         // duplicate request
         expectNoResponse(processRequest);
-
+        System.out.println("refund >>>>");
         // refund request
         expectNoResponse(refundRequest);
 
+        System.out.println("finalBalance >>>>");
         // check balance
         this.repository.findById(customer.getId())
                        .as(StepVerifier::create)
@@ -91,9 +95,9 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
     @Test// test case for customer not found
     public void customerNotFoundTest(){
         var orderId = UUID.randomUUID();
-        var processRequest = TestDataUtil.createProcessRequest(orderId, UUID.randomUUID(), 3);
-        expectResponse(processRequest, PaymentResponse.Declined.class, e -> {
-            Assertions.assertEquals(orderId, e.orderId());
+        var processRequest = TestDataUtil.createProcessRequest(orderId, UUID.randomUUID(), 3.0);
+        expectResponse(processRequest, CartPaymentResponse.Declined.class, e -> {
+            Assertions.assertEquals(orderId, e.responseItem().getOrderId());
             Assertions.assertEquals("Customer not found", e.message());
         });
     }
@@ -102,14 +106,14 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
     public void insufficientBalanceTest(){
         var orderId = UUID.randomUUID();
         var customer = getCustomer("mike@gmail.com");
-        var processRequest = TestDataUtil.createProcessRequest(orderId, customer.getId(), 101);
-        expectResponse(processRequest, PaymentResponse.Declined.class, e -> {
-            Assertions.assertEquals(orderId, e.orderId());
+        var processRequest = TestDataUtil.createProcessRequest(orderId, customer.getId(), 101.0);
+        expectResponse(processRequest, CartPaymentResponse.Declined.class, e -> {
+            Assertions.assertEquals(orderId, e.responseItem().getOrderId());
             Assertions.assertEquals("Customer does not have enough balance", e.message());
         });
     }
 
-    private <T> void expectResponse(Request request, Class<T> type, Consumer<T> assertion){
+    private <T> void expectResponse(CartRequest request, Class<T> type, Consumer<T> assertion){
         resFlux
                 .doFirst(() -> this.streamBridge.send("payment-request", request))
                 .timeout(Duration.ofSeconds(2), Mono.empty())
@@ -119,7 +123,7 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
                 .verifyComplete();
     }
 
-    private void expectNoResponse(Request request){
+    private void expectNoResponse(CartRequest request){
         resFlux
                 .doFirst(() -> this.streamBridge.send("payment-request", request))
                 .timeout(Duration.ofSeconds(2), Mono.empty())
@@ -131,7 +135,7 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
     static class TestConfig {
 
         @Bean
-        public Consumer<Flux<PaymentResponse>> responseConsumer(){
+        public Consumer<Flux<CartPaymentResponse>> responseConsumer(){
             return f -> f.doOnNext(resSink::tryEmitNext).subscribe();
         }
 

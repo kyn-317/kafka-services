@@ -1,11 +1,17 @@
 package com.kyn.payment.messaging.processor;
 
+import java.util.function.UnaryOperator;
+
 import org.springframework.stereotype.Service;
 
+import com.kyn.common.exception.EventAlreadyProcessedException;
 import com.kyn.common.messages.payment.CartPaymentRequest;
 import com.kyn.common.messages.payment.CartPaymentResponse;
 import com.kyn.common.processor.CartRequestProcessor;
 import com.kyn.common.processor.RequestProcessor;
+import com.kyn.payment.common.service.CartPaymentService;
+import com.kyn.payment.messaging.mapper.CartMapper;
+import com.kyn.payment.messaging.mapper.MessageDtoMapper;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -17,20 +23,20 @@ public class CartPaymentRequestProcessorImpl implements CartPaymentRequestProces
 
     @Override
     public Mono<CartPaymentResponse> handle(CartPaymentRequest.Process request) {
-        var dto = MessageDtoMapper.toProcessRequest(request);
+        var dto = CartMapper.toProcessRequest(request);
         return this.service.process(dto)
-                           .map(MessageDtoMapper::toProcessedResponse)
+                           .map(processed -> CartMapper.toProcessedResponse(request,processed))
                            .transform(exceptionHandler(request));
     }
 
     @Override
     public Mono<CartPaymentResponse> handle(CartPaymentRequest.Refund request) {
-        return this.service.refund(request.orderId())
+        return this.service.refund(request.requestItem().getOrderId())
                            .then(Mono.empty());
     }
 
     private UnaryOperator<Mono<CartPaymentResponse>> exceptionHandler(CartPaymentRequest.Process request) {
         return mono -> mono.onErrorResume(EventAlreadyProcessedException.class, ex -> Mono.empty())
-                           .onErrorResume(MessageDtoMapper.toPaymentDeclinedResponse(request));
+                           .onErrorResume(CartMapper.toPaymentDeclinedResponse(request));
     }
 }

@@ -1,4 +1,4 @@
-/* package com.kyn.payment.messaging.config;
+package com.kyn.payment.messaging.config;
 
 import java.util.function.Function;
 
@@ -10,23 +10,23 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
-import com.kyn.common.messages.payment.PaymentRequest;
-import com.kyn.common.messages.payment.PaymentResponse;
+import com.kyn.common.messages.payment.CartPaymentRequest;
+import com.kyn.common.messages.payment.CartPaymentResponse;
 import com.kyn.common.util.MessageConverter;
-import com.kyn.payment.messaging.processor.PaymentRequestProcessor;
+import com.kyn.payment.messaging.processor.CartPaymentRequestProcessor;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 
 @Configuration
 @RequiredArgsConstructor
-public class PaymentRequestProcessorConfig {
+public class CartPaymentRequestProcessorConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(PaymentRequestProcessorConfig.class);
-    private final PaymentRequestProcessor paymentRequestProcessor;
+    private static final Logger log = LoggerFactory.getLogger(CartPaymentRequestProcessorConfig.class);
+    private final CartPaymentRequestProcessor paymentRequestProcessor;
 
     @Bean
-    public Function<Flux<Message<PaymentRequest>>, Flux<Message<PaymentResponse>>> processor() {
+    public Function<Flux<Message<CartPaymentRequest>>, Flux<Message<CartPaymentResponse>>> processor() {
         return flux -> flux.map(MessageConverter::toRecord)
                            .doOnNext(r -> log.info("customer payment received {}", r.message()))
                            .concatMap(r -> this.paymentRequestProcessor.process(r.message())
@@ -36,11 +36,11 @@ public class PaymentRequestProcessorConfig {
                            .map(this::toMessage);
     }
 
-    private Message<PaymentResponse> toMessage(PaymentResponse response) {
+    private Message<CartPaymentResponse> toMessage(CartPaymentResponse response) {
         log.info("customer payment produced {}", response);
         return MessageBuilder.withPayload(response)
-                             .setHeader(KafkaHeaders.KEY, response.orderId().toString())
+                             .setHeader(KafkaHeaders.KEY, response.responseItem().getOrderId().toString())
                              .build();
     }
 
-} */
+}

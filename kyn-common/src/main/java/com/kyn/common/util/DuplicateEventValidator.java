@@ -1,11 +1,11 @@
 package com.kyn.common.util;
 
+import java.util.function.Function;
+
 import com.kyn.common.exception.EventAlreadyProcessedException;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
-
-import java.util.function.Function;
 
 @Slf4j
 public class DuplicateEventValidator {
@@ -20,6 +20,7 @@ public class DuplicateEventValidator {
 
     public static <T> Mono<T> validate(Mono<Boolean> eventValidationPublisher, Mono<T> eventProcessingPublisher){
         return eventValidationPublisher
+                .doOnNext(data -> log.info("data >> {}" , data))
                 .transform(emitErrorForRedundantProcessing())
                 .then(eventProcessingPublisher);
     }

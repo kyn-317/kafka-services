@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.kyn.common.messages.payment.PaymentStatus;
 import com.kyn.payment.application.entity.CustomerPayment;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -17,4 +18,5 @@ public interface PaymentRepository extends ReactiveCrudRepository<CustomerPaymen
 
     Mono<CustomerPayment> findByOrderIdAndStatus(UUID orderId, PaymentStatus status);
 
+    Flux<CustomerPayment> findByCustomerId(UUID customerId);
 }

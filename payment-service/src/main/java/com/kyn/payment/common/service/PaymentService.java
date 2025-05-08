@@ -1,4 +1,4 @@
-package com.kyn.payment.common.service;
+/* package com.kyn.payment.common.service;
 
 import java.util.UUID;
 
@@ -13,4 +13,4 @@ public interface PaymentService {
 
     Mono<PaymentDto> refund(UUID orderId);
 
-}
+} */

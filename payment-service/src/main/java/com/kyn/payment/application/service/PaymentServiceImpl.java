@@ -1,4 +1,4 @@
-package com.kyn.payment.application.service;
+/* package com.kyn.payment.application.service;
 
 import java.util.UUID;
 
@@ -73,4 +73,4 @@ public class PaymentServiceImpl implements PaymentService {
                                       .map(EntityDtoMapper::toDto);
     }
 
-}
+} */

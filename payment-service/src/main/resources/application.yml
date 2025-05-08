@@ -17,6 +17,8 @@ spring:
         processor-out-0:
           destination: payment-response
       kafka:
+
+      
         binder:
           consumer-properties:
             "value.deserializer": org.springframework.kafka.support.serializer.JsonDeserializer

@@ -1,4 +1,4 @@
-package com.kyn.payment.messaging.processor;
+/* package com.kyn.payment.messaging.processor;
 
 import java.util.function.UnaryOperator;
 
@@ -38,4 +38,4 @@ public class PaymentRequestProcessorImpl implements PaymentRequestProcessor {
                            .onErrorResume(MessageDtoMapper.toPaymentDeclinedResponse(request));
     }
 
-}
+} */

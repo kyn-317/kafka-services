@@ -20,6 +20,6 @@ public class Customer extends BaseDocuments {
     @Id
     private UUID id;
     private String email;
-    private Integer balance;
+    private Double balance;
 
 }

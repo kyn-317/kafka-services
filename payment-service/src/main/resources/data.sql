@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS customer_payment;
 CREATE TABLE customer (
    id uuid default random_uuid() primary key,
    email VARCHAR(50) NOT NULL,
-   balance int,
+   balance double precision,
    created_at timestamp default current_timestamp,
    updated_at timestamp default current_timestamp,
    created_by varchar(50),
@@ -16,7 +16,7 @@ CREATE TABLE customer_payment (
    order_id uuid,
    customer_id uuid,
    status VARCHAR(50),
-   amount int,
+   amount double precision,
    created_at timestamp default current_timestamp,
    updated_at timestamp default current_timestamp,
    created_by varchar(50),

@@ -24,6 +24,6 @@ public class CustomerPayment extends BaseDocuments {
     private UUID orderId;
     private UUID customerId;
     private PaymentStatus status;
-    private Integer amount;
+    private Double amount;
 
 }
