@@ -48,7 +48,6 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
         var processRequest = TestDataUtil.createProcessRequest(orderId, customer.getId(), 3.0);
         var refundRequest = TestDataUtil.createRefundRequest(orderId);
         
-        System.out.println("payment >>>>");
         // process payment
         expectResponse(processRequest, CartPaymentResponse.Processed.class, e -> {
             Assertions.assertNotNull(e.paymentId());
@@ -56,21 +55,19 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
             Assertions.assertEquals(3.0, e.responseItem().getTotalPrice());
         });
 
-        System.out.println("balance >>>>");
         // check balance
         this.repository.findById(customer.getId())
                        .as(StepVerifier::create)
                        .consumeNextWith(c -> Assertions.assertEquals(97, c.getBalance()))
                        .verifyComplete();
 
-        System.out.println("duplicate >>>>");
+
         // duplicate request
         expectNoResponse(processRequest);
-        System.out.println("refund >>>>");
+
         // refund request
         expectNoResponse(refundRequest);
 
-        System.out.println("finalBalance >>>>");
         // check balance
         this.repository.findById(customer.getId())
                        .as(StepVerifier::create)

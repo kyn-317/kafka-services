@@ -1,5 +1,6 @@
 package com.kyn.common.messages.inventory;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.kyn.common.dto.OrderSummaryDto;
@@ -11,13 +12,12 @@ public sealed interface CartInventoryResponse extends CartResponse {
     
     @Builder
     record Deducted(OrderSummaryDto responseItem
-    ,UUID cartId) implements CartInventoryResponse {
-
+    ,List<UUID> inventoryIds) implements CartInventoryResponse {
     }
 
     @Builder
     record Declined(OrderSummaryDto responseItem
-    ,UUID cartId) implements CartInventoryResponse {
+    ,String message) implements CartInventoryResponse {
     }
 
 }

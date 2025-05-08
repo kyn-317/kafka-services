@@ -1,7 +1,6 @@
 package com.kyn.inventory.application.service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -13,7 +12,6 @@ import com.kyn.inventory.application.dto.WarehouseSearch;
 import com.kyn.inventory.application.entity.Warehouse;
 import com.kyn.inventory.application.mapper.EntityDtoMapper;
 import com.kyn.inventory.application.repository.WarehouseRepository;
-
 import com.kyn.inventory.application.service.interfaces.WarehouseService;
 import com.kyn.inventory.application.util.FormatUtil;
 
@@ -33,7 +31,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     public Mono<Warehouse> deduct(WarehouseRequestDto request) {
         return 
          DuplicateEventValidator.validate(
-            this.warehouseRepository.existsByOrderId(request.orderId()),
+            this.warehouseRepository.existsByOrderIdAndRetrievalType(request.orderId(), request.retrievalType()),
             this.warehouseRepository.findCurrentStockWithDetails(request.productId())
          )
         .flatMap(currentStock -> {
@@ -47,7 +45,10 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public Mono<Warehouse> restore(WarehouseRequestDto request) {
-        return save(request);
+        return DuplicateEventValidator.validate(
+            this.warehouseRepository.existsByOrderIdAndRetrievalType(request.orderId(), request.retrievalType()),
+            save(request)
+         );
     }
 
     private Mono<Warehouse> save(WarehouseRequestDto request) {

@@ -4,6 +4,9 @@ import java.util.UUID;
 
 import com.kyn.inventory.application.enums.StorageRetrievalType;
 
+import lombok.Builder;
+
+@Builder
 public record WarehouseRequestDto(
     UUID productId,
     UUID requesterId,

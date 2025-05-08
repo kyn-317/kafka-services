@@ -1,9 +1,15 @@
 package com.kyn.inventory.application.mapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
+import com.kyn.common.dto.OrderDetailDto;
+import com.kyn.common.dto.OrderSummaryDto;
+import com.kyn.common.messages.inventory.CartInventoryResponse;
 import com.kyn.inventory.application.dto.CurrentStock;
 import com.kyn.inventory.application.dto.WarehouseDto;
+import com.kyn.inventory.application.dto.WarehouseRequestDto;
 import com.kyn.inventory.application.entity.OrderInventory;
 import com.kyn.inventory.application.entity.Warehouse;
 import com.kyn.inventory.application.entity.WarehouseHistory;
@@ -86,4 +92,28 @@ public class EntityDtoMapper {
         );
     }
 
+    public static WarehouseRequestDto detailToRequest(OrderDetailDto detail, UUID customerId , StorageRetrievalType retrievalType) {
+
+        return WarehouseRequestDto.builder()
+            .productId(detail.getProductId())
+            .requesterId(customerId)
+            .orderId(detail.getOrderId())
+            .retrievalType(retrievalType)
+            .quantity(detail.getQuantity())
+            .build();
+    }
+
+    public static CartInventoryResponse.Deducted toDeducted(OrderSummaryDto summary, List<UUID> inventoryIds) {
+        return CartInventoryResponse.Deducted.builder()
+            .responseItem(summary)
+            .inventoryIds(inventoryIds)
+            .build();
+    }
+
+    public static CartInventoryResponse.Declined toDeclined(OrderSummaryDto summary, String message) {
+        return CartInventoryResponse.Declined.builder()
+            .responseItem(summary)
+            .message(message)
+            .build();
+    }
 }
