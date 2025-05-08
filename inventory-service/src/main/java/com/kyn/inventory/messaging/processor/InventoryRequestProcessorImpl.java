@@ -32,11 +32,13 @@ public class InventoryRequestProcessorImpl implements InventoryRequestProcessor 
     @Override
     public Mono<CartInventoryResponse> handle(Restore request) {
         return this.service.restore(request)
-                .then(Mono.empty());
+        .then(Mono.empty());
     }
     
     private UnaryOperator<Mono<CartInventoryResponse>> exceptionHandler(Deduct request) {
         return mono -> mono.onErrorResume(EventAlreadyProcessedException.class, e -> Mono.empty())
                            .onErrorResume(MessageDtoMapper.toInventoryDeclinedResponse(request));
     }
+
+
 }

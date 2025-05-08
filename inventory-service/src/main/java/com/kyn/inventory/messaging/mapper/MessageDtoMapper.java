@@ -16,4 +16,12 @@ public class MessageDtoMapper {
                                                                        .build()
         );
     }
+
+    public static Function<Throwable, Mono<CartInventoryResponse>> toInventoryDeclinedResponse(CartInventoryRequest.Restore request) {
+        return ex -> Mono.fromSupplier(() -> CartInventoryResponse.Declined.builder()
+                                                                       .responseItem(request.requestItem())
+                                                                       .message(ex.getMessage())
+                                                                       .build()
+        );
+    }
 }
