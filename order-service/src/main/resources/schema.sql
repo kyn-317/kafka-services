@@ -1,7 +1,7 @@
--- 스키마가 없는 경우 생성
+-- Create schema if not exists
 CREATE SCHEMA IF NOT EXISTS order_data;
 
--- 테이블이 없는 경우 생성
+-- Create tables if not exists
 -- order by cart
 CREATE TABLE IF NOT EXISTS order_data.order (
     order_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -79,10 +79,69 @@ public class InventoryServiceTest extends AbstractIntegrationTest {
 
     @Test // please remove this - not a good fit for embedded kafka test. should be covered as part of unit tests
     public void restoreWithoutDeductTest(){
+        var orderId = UUID.randomUUID();
+        var customerId = UUID.randomUUID();
+        var orderDetails = List.of(
+            OrderDetailDto.builder()
+            .productId(UUID.fromString("11111111-1111-1111-1111-111111111122"))
+            .orderId(orderId)
+            .quantity(10)
+            .build(),
+            OrderDetailDto.builder()
+            .productId(UUID.fromString("33333333-3333-3333-3333-333333333344"))
+            .orderId(orderId)
+            .quantity(10)
+            .build()
+        );
+        var exampleOrder = OrderSummaryDto.builder()
+        .orderId(orderId)
+        .customerId(customerId)
+        .orderDetails(orderDetails)
+        .build();
+
+        var request = CartInventoryRequest.Deduct.builder()
+        .requestItem(exampleOrder)
+        .build();
+        
+        expectResponse(request, CartInventoryResponse.class, res -> {
+            Assertions.assertThat(res.responseItem().getOrderId()).isEqualTo(exampleOrder.getOrderId());
+            Assertions.assertThat(res.responseItem().getCustomerId()).isEqualTo(exampleOrder.getCustomerId());
+            Assertions.assertThat(res.responseItem().getOrderDetails().size()).isEqualTo(exampleOrder.getOrderDetails().size());
+            Assertions.assertThat(res.responseItem().getOrderDetails().get(0).getProductId()).isEqualTo(exampleOrder.getOrderDetails().get(0).getProductId());
+            Assertions.assertThat(res.responseItem().getOrderDetails().get(0).getQuantity()).isEqualTo(exampleOrder.getOrderDetails().get(0).getQuantity());
+        });
     }
 
     @Test
     public void outOfStockErrorTest(){
+
+        var orderId = UUID.randomUUID();
+        var customerId = UUID.randomUUID();
+        var orderDetails = List.of(
+            OrderDetailDto.builder()
+            .productId(UUID.fromString("11111111-1111-1111-1111-111111111122"))
+            .orderId(orderId)
+            .quantity(200)
+            .build(),
+            OrderDetailDto.builder()
+            .productId(UUID.fromString("33333333-3333-3333-3333-333333333344"))
+            .orderId(orderId)
+            .quantity(300)
+            .build()
+        );
+        var exampleOrder = OrderSummaryDto.builder()
+        .orderId(orderId)
+        .customerId(customerId)
+        .orderDetails(orderDetails)
+        .build();
+
+        var request = CartInventoryRequest.Deduct.builder()
+        .requestItem(exampleOrder)
+        .build();
+        
+        expectResponse(request, CartInventoryResponse.Declined.class, res -> {
+            Assertions.assertThat(res.message()).isEqualTo("Out of stock");
+        });
     }
 
     private <T> void expectResponse(CartInventoryRequest request, Class<T> type, Consumer<T> assertion){

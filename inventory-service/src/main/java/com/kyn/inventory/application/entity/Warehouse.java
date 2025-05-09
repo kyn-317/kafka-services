@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table("warehouse")
+@Table(schema = "warehouse_data", name = "warehouse")
 public class Warehouse {
 
     @Id

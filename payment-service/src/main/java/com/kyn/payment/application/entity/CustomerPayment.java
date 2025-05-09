@@ -3,6 +3,7 @@ package com.kyn.payment.application.entity;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 import com.kyn.common.messages.payment.PaymentStatus;
 
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=false)
+@Table(schema = "payment_data", name = "customer_payment")
 public class CustomerPayment extends BaseDocuments {
 
     @Id

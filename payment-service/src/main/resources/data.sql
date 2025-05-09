@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS customer;
-DROP TABLE IF EXISTS customer_payment;
+-- Create schema if not exists
+CREATE SCHEMA IF NOT EXISTS payment_data;
 
-CREATE TABLE customer (
-   id uuid default random_uuid() primary key,
+CREATE TABLE IF NOT EXISTS payment_data.customer (
+   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
    email VARCHAR(50) NOT NULL,
    balance double precision,
    created_at timestamp default current_timestamp,
@@ -11,8 +11,8 @@ CREATE TABLE customer (
    updated_by varchar(50)
 );
 
-CREATE TABLE customer_payment (
-   payment_id uuid default random_uuid() primary key,
+CREATE TABLE IF NOT EXISTS payment_data.customer_payment (
+   payment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
    order_id uuid,
    customer_id uuid,
    status VARCHAR(50),
@@ -21,10 +21,14 @@ CREATE TABLE customer_payment (
    updated_at timestamp default current_timestamp,
    created_by varchar(50),
    updated_by varchar(50),
-   foreign key (customer_id) references customer(id)
+   foreign key (customer_id) references payment_data.customer(id)
 );
 
-insert into customer(email, balance, created_by, updated_by)
+-- Initialize tables
+TRUNCATE TABLE payment_data.customer CASCADE;
+TRUNCATE TABLE payment_data.customer_payment CASCADE;
+
+insert into payment_data.customer(email, balance, created_by, updated_by)
     values
         ('sam@gmail.com', 100, 'system', 'system'),
         ('mike@gmail.com', 100, 'system', 'system'),

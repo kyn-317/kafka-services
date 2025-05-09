@@ -3,7 +3,6 @@ package com.kyn.message.application.service.interfaces;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.messaging.Message;
 
-import com.kyn.common.messages.message.MessageRequest;
 import com.kyn.message.application.dto.ServerSentMessage;
 
 import reactor.core.publisher.Flux;

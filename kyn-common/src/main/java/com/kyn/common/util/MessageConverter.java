@@ -9,11 +9,11 @@ import reactor.kafka.receiver.ReceiverOffset;
 public class MessageConverter {
 
     public static <T> Record<T> toRecord(Message<T> message) {
-        log.info("MessageConverter.toRecord 호출: message={}", message);
+        log.info("MessageConverter.toRecord called: message={}", message);
         var payload = message.getPayload();
         var key = message.getHeaders().get(KafkaHeaders.RECEIVED_KEY, String.class);
         var ack = message.getHeaders().get(KafkaHeaders.ACKNOWLEDGMENT, ReceiverOffset.class);
-        log.info("MessageConverter.toRecord 결과: key={}, payload={}, ack={}", key, payload, ack);
+        log.info("MessageConverter.toRecord result: key={}, payload={}, ack={}", key, payload, ack);
         return new Record<>(key, payload, ack);
     }
 

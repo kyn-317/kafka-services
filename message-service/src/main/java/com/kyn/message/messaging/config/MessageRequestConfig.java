@@ -1,7 +1,7 @@
 package com.kyn.message.messaging.config;
 
-import java.util.function.Function;
 import java.time.Duration;
+import java.util.function.Function;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +12,6 @@ import org.springframework.messaging.Message;
 import com.kyn.common.messages.message.MessageRequest;
 import com.kyn.common.messages.message.MessageResponse;
 import com.kyn.common.util.MessageConverter;
-import com.kyn.common.util.Record;
 import com.kyn.message.messaging.processor.MessageRequestProcessor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +46,7 @@ public class MessageRequestConfig {
                     })
                     .doOnError(error -> {
                         log.error("Error processing message: {}", error.getMessage());
-                        // DLQ로 전송하는 로직 추가
+                        // Add logic to send to DLQ
                     })
                     .onErrorResume(error -> {
                         log.error("Error in message processing pipeline: {}", error.getMessage());

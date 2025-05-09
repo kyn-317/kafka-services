@@ -2,9 +2,12 @@ spring:
   application:
     name: inventory-service
   r2dbc:
-    url: r2dbc:h2:mem:///inventorydb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password: ''
+    url: r2dbc:postgresql://localhost:5432/kynpost
+    username: kynpostgres
+    password: kynpostgrespw
+  sql:
+    init:
+      mode: always
   cloud:
     function:
       definition: processor
@@ -30,4 +33,4 @@ spring:
             "key.serializer": org.apache.kafka.common.serialization.StringSerializer
 
 server:
-  port: 8082 
+  port: 8084

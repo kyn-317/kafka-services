@@ -1,4 +1,9 @@
+
 package com.kyn.message.application.service;
+
+import java.time.Duration;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.messaging.Message;
@@ -12,10 +17,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 import reactor.core.publisher.Sinks.Many;
-
-import java.time.Duration;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Slf4j
@@ -109,14 +110,14 @@ public class MessageServiceImpl implements MessageService{
      */
     @Override
     public Flux<ServerSentEvent<String>> getEventStreamForClient(String clientId) {
-        // 기존 sink 정리
+        // Clean up existing sink
         Many<ServerSentEvent<String>> oldSink = sinkMap.remove(clientId);
         if (oldSink != null) {
             oldSink.tryEmitComplete();
             log.info("Cleaned up old sink for client {}", clientId);
         }
         
-        // 새로운 sink 생성
+        // Create new sink
         Many<ServerSentEvent<String>> newSink = createNewSink(clientId);
         
         return newSink.asFlux()
