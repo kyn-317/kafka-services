@@ -1,5 +1,7 @@
 package com.kyn.message.messaging.processor;
 
+import org.springframework.stereotype.Service;
+
 import com.kyn.common.messages.message.TemplateMessageRequest.ORDER_CANCELLED;
 import com.kyn.common.messages.message.TemplateMessageRequest.ORDER_COMPLETED;
 import com.kyn.common.messages.message.TemplateMessageRequest.STOCK_RECEIVED;
@@ -11,6 +13,7 @@ import com.kyn.message.messaging.mapper.MessageDtoMapper;
 
 import reactor.core.publisher.Mono;
 
+@Service
 public class TemplateMessageRequestProcessorImpl implements TemplateMessageRequestProcessor {
 
     private final MessageTemplateService messageTemplateService;
