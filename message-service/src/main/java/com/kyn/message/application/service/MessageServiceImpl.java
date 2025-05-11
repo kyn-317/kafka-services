@@ -1,4 +1,3 @@
-
 package com.kyn.message.application.service;
 
 import java.time.Duration;
@@ -64,8 +63,12 @@ public class MessageServiceImpl implements MessageService{
                 .data(message.toString())
                 .build();
                 
-        // publish event to all subscribers
-        sink.tryEmitNext(event);
+        // publish event to all subscribers in sinkMap
+        sinkMap.forEach((clientId, clientSink) -> {
+            log.info("Sending event to client {}: {}", clientId, event);
+            clientSink.tryEmitNext(event);
+        });
+    
     }
     
     /**

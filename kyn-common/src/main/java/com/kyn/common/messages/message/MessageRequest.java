@@ -12,4 +12,5 @@ public sealed interface MessageRequest extends Request {
     
     @Builder
     record Push(UUID orderId, UUID userId, String message) implements MessageRequest {}
+    
 }

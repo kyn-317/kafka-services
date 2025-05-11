@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kyn.common.messages.message.MessageRequest;
 import com.kyn.message.application.dto.MessageData;
+import com.kyn.message.application.dto.NoticeMessage;
 import com.kyn.message.application.dto.ServerSentMessage;
 import com.kyn.message.application.service.MessageServiceImpl;
 
@@ -21,7 +22,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/api/messages")
+@RequestMapping("/messageStream")
 @RequiredArgsConstructor
 @Slf4j
 public class MessageController {
@@ -50,7 +51,7 @@ public class MessageController {
      * Send event to all clients
      */
     @PostMapping("/publish")
-    public Mono<Void> publishEvent(@RequestBody MessageRequest request) {
+    public Mono<Void> publishEvent(@RequestBody NoticeMessage request) {
         log.info("Event publish request: {}", request);
         var serverSentMessage = ServerSentMessage.builder()
             .type("push")
