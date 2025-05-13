@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
-//@Service
 @RequiredArgsConstructor
 public class OrderEventListenerImpl implements OrderEventListener, EventPublisher<UUID> {
 

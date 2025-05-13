@@ -1,7 +1,7 @@
 spring:
   cloud:
     function:
-      definition: orderOrchestrator;messageEventSupplier;cartOrderOrchestrator
+      definition: orderOrchestrator;messageEventSupplier;cartOrderOrchestrator;templateMessageEventSupplier
     stream:
       default:
         producer:
@@ -14,14 +14,16 @@ spring:
           destination: payment-request
         inventory-request-channel:
           destination: inventory-request
-        messageEventSupplier-out-0:
-          destination: message-request
         cartOrderOrchestrator-in-0:
           destination: cart-payment-response,cart-inventory-response
         cart-payment-request-channel:
           destination: cart-payment-request
         cart-inventory-request-channel:
           destination: cart-inventory-request
+        messageEventSupplier-out-0:
+          destination: message-request
+        templateMessageEventSupplier-out-0:
+          destination: template-message-request
       kafka:
         binder:
           consumer-properties:
