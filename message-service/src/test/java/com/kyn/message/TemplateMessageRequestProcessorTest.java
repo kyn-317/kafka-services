@@ -1,11 +1,8 @@
 package com.kyn.message;
 
-import java.time.Duration;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -38,7 +35,7 @@ import com.kyn.message.messaging.processor.TemplateMessageRequestProcessorImpl;
 
 @TestPropertySource(properties = {
         "spring.cloud.function.definition=processor;responseConsumer",
-        "spring.cloud.stream.bindings.responseConsumer-in-0.destination=payment-response"
+        "spring.cloud.stream.bindings.responseConsumer-in-0.destination=message-response"
 })
 @ExtendWith(MockitoExtension.class)
 public class TemplateMessageRequestProcessorTest extends AbstractIntegrationTest {
@@ -179,5 +176,15 @@ public class TemplateMessageRequestProcessorTest extends AbstractIntegrationTest
         StepVerifier.create(result)
             .expectError(RuntimeException.class)
             .verify();
+    }
+
+    @TestConfiguration
+    static class TestConfig {
+
+        @Bean   
+        public Consumer<Flux<TemplateMessageRequest>> responseConsumer(){
+            return f -> f.doOnNext(resSink::tryEmitNext).subscribe();
+        }
+
     }
 }
