@@ -7,7 +7,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 @SpringBootTest(properties = {
 		"logging.level.root=ERROR",
-		"logging.level.com.kyn*=INFO",
+		"logging.level.com.kyn*=DEBUG",
 		"spring.cloud.stream.kafka.binder.configuration.auto.offset.reset=earliest",
         "spring.data.mongodb.uri=mongodb://localhost:27017/message"
 })

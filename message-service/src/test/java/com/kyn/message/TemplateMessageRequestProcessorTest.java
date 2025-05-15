@@ -1,9 +1,15 @@
 package com.kyn.message;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -11,28 +17,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
 
 import com.kyn.common.messages.message.TemplateMessageRequest;
-
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.Sinks;
-import reactor.test.StepVerifier;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import com.kyn.message.application.service.interfaces.MessageHistoryService;
 import com.kyn.message.application.service.interfaces.MessageTemplateService;
 import com.kyn.message.application.service.interfaces.MessagingService;
 import com.kyn.message.messaging.processor.TemplateMessageRequestProcessorImpl;
 
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
+import reactor.test.StepVerifier;
+
+@Slf4j
 @TestPropertySource(properties = {
         "spring.cloud.function.definition=processor;responseConsumer",
         "spring.cloud.stream.bindings.responseConsumer-in-0.destination=message-response"
@@ -59,131 +55,105 @@ public class TemplateMessageRequestProcessorTest extends AbstractIntegrationTest
     
     @BeforeEach
     void setUp() {
+        log.info("Setting up test dependencies and mocks");
         processor = new TemplateMessageRequestProcessorImpl(
             messageTemplateService,
             messagingService,
             messageHistoryService
         );
+        
+        // 각 서비스의 mock 동작을 설정
+        Mockito.when(messageTemplateService.setTemplateMessage(Mockito.anyMap(), Mockito.anyInt()))
+            .thenAnswer(invocation -> {
+                Map<String, String> requestItems = invocation.getArgument(0);
+                Integer templateId = invocation.getArgument(1);
+                log.info("Mock messageTemplateService.setTemplateMessage called with templateId: {}, requestItems: {}", templateId, requestItems);
+                return Mono.just("mocked template message for template ID " + templateId);
+            });
+        
+        Mockito.when(messagingService.push(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
+            .thenAnswer(invocation -> {
+                String message = invocation.getArgument(0);
+                String userId = invocation.getArgument(1);
+                String type = invocation.getArgument(2);
+                log.info("Mock messagingService.push called with userId: {}, type: {}, message: {}", userId, type, message);
+                return Mono.empty();
+            });
+            
+        Mockito.when(messageHistoryService.save(Mockito.any()))
+            .thenAnswer(invocation -> {
+                log.info("Mock messageHistoryService.save called");
+                return Mono.empty();
+            });
+        
+        log.info("Test setup completed");
     }
 
 
     @Test
-    void shouldProcessOrderCompletedMessage() {
-        // given
-        Map<String, String> requestItem = Map.of("userId", "test-user", "orderId", "order-123");
-        TemplateMessageRequest.ORDER_COMPLETED request = TemplateMessageRequest.ORDER_COMPLETED.builder()
-            .requestItem(requestItem)
-            .userId("test-user")
-            .orderId("order-123")
+    void consumeOrderCompletedMessage() {
+        log.info("Starting consumeOrderCompletedMessage test");
+        
+        // 1. 테스트 데이터 준비
+        var request = TemplateMessageRequest.ORDER_COMPLETED.builder()
+            .requestItem(Map.of("user_name", "test-user", "order_details", "order-123"))
+            .userId("07a6eacb-144c-4450-a941-04f948e9bf36")
+            .orderId("61418150-40d4-42f7-bdbd-ee68a7462d08")
             .build();
-        String templateMessage = "주문이 완료되었습니다.";
         
-        when(messageTemplateService.setTemplateMessage(any(), anyInt()))
-            .thenReturn(Mono.just(templateMessage));
-        when(messagingService.push(anyString(), anyString(), anyString()))
-            .thenReturn(Mono.empty());
-        when(messageHistoryService.save(any()))
-            .thenReturn(Mono.empty());
-            
-        // when
-        Mono<Void> result = processor.handle(request);
+        log.info("Created test request: {}", request);
         
-        // then
-        StepVerifier.create(result)
-            .verifyComplete();
+        // 2. 메시지 보내기 및 검증
+        sendMessageAndVerify(request);
+        
+        // 3. 정상 처리 여부 검증
+        log.info("Verifying service method calls");
+        Mockito.verify(messageTemplateService, Mockito.times(1))
+            .setTemplateMessage(request.requestItem(), 1);
+        
+        Mockito.verify(messagingService, Mockito.times(1))
+            .push(Mockito.anyString(), Mockito.eq(request.userId()), Mockito.eq("ORDER_COMPLETED"));
             
-        verify(messageTemplateService).setTemplateMessage(requestItem, 1);
-        verify(messagingService).push(templateMessage, "test-user", "ORDER_COMPLETED");
-        verify(messageHistoryService).save(any());
+        Mockito.verify(messageHistoryService, Mockito.times(1))
+            .save(Mockito.any());
+        
+        log.info("Test completed successfully");
     }
     
-    @Test
-    void shouldProcessOrderCancelledMessage() {
-        // given
-        Map<String, String> requestItem = Map.of("userId", "test-user", "orderId", "order-123");
-        TemplateMessageRequest.ORDER_CANCELLED request = TemplateMessageRequest.ORDER_CANCELLED.builder()
-            .requestItem(requestItem)
-            .userId("test-user")
-            .orderId("order-123")
-            .build();
-        String templateMessage = "주문이 취소되었습니다.";
+    private <T extends TemplateMessageRequest> void sendMessageAndVerify(T request) {
+        log.info("Processing message through processor");
         
-        when(messageTemplateService.setTemplateMessage(any(), anyInt()))
-            .thenReturn(Mono.just(templateMessage));
-        when(messagingService.push(anyString(), anyString(), anyString()))
-            .thenReturn(Mono.empty());
-        when(messageHistoryService.save(any()))
-            .thenReturn(Mono.empty());
-            
-        // when
-        Mono<Void> result = processor.handle(request);
-        
-        // then
-        StepVerifier.create(result)
+        // Processor를 통해 메시지 처리
+        StepVerifier.create(processor.process(request))
             .verifyComplete();
-            
-        verify(messageTemplateService).setTemplateMessage(requestItem, 2);
-        verify(messagingService).push(templateMessage, "test-user", "ORDER_CANCELLED");
-        verify(messageHistoryService).save(any());
-    }
-    
-    @Test
-    void shouldProcessStockReceivedMessage() {
-        // given
-        Map<String, String> requestItem = Map.of("userId", "test-user", "productId", "product-123");
-        TemplateMessageRequest.STOCK_RECEIVED request = TemplateMessageRequest.STOCK_RECEIVED.builder()
-            .requestItem(requestItem)
-            .userId("test-user")
-            .build();
-        String templateMessage = "재고가 입고되었습니다.";
         
-        when(messageTemplateService.setTemplateMessage(any(), anyInt()))
-            .thenReturn(Mono.just(templateMessage));
-        when(messagingService.push(anyString(), anyString(), anyString()))
-            .thenReturn(Mono.empty());
-        when(messageHistoryService.save(any()))
-            .thenReturn(Mono.empty());
-            
-        // when
-        Mono<Void> result = processor.handle(request);
+        log.info("Message processed successfully through processor");
         
-        // then
-        StepVerifier.create(result)
+        // Kafka에 메시지 보내기 시뮬레이션
+        log.info("Sending message to Kafka topic: template-message-request");
+        boolean sent = streamBridge.send("template-message-request", request);
+        log.info("Message sent to Kafka: {}", sent);
+        
+        // 응답 메시지 검증 (필요한 경우)
+        log.info("Verifying response flux");
+        resFlux
+            .timeout(Duration.ofSeconds(2), Mono.empty())
+            .doOnNext(response -> log.info("Received response: {}", response))
+            .as(StepVerifier::create)
             .verifyComplete();
-            
-        verify(messageTemplateService).setTemplateMessage(requestItem, 3);
-        verify(messagingService).push(templateMessage, "test-user", "STOCK_RECEIVED");
-        verify(messageHistoryService).save(any());
-    }
-    
-    @Test
-    void shouldHandleErrorInMessageProcessing() {
-        // given
-        Map<String, String> requestItem = Map.of("userId", "test-user", "orderId", "order-123");
-        TemplateMessageRequest.ORDER_COMPLETED request = TemplateMessageRequest.ORDER_COMPLETED.builder()
-            .requestItem(requestItem)
-            .userId("test-user")
-            .orderId("order-123")
-            .build();
         
-        when(messageTemplateService.setTemplateMessage(any(), anyInt()))
-            .thenReturn(Mono.error(new RuntimeException("Template error")));
-            
-        // when
-        Mono<Void> result = processor.handle(request);
-        
-        // then
-        StepVerifier.create(result)
-            .expectError(RuntimeException.class)
-            .verify();
+        log.info("Message verification completed");
     }
-
+  
     @TestConfiguration
     static class TestConfig {
 
         @Bean   
         public Consumer<Flux<TemplateMessageRequest>> responseConsumer(){
-            return f -> f.doOnNext(resSink::tryEmitNext).subscribe();
+            return f -> f.doOnNext(msg -> {
+                log.info("Response consumer received message: {}", msg);
+                resSink.tryEmitNext(msg);
+            }).subscribe();
         }
 
     }

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import com.kyn.common.messages.message.TemplateMessageRequest.ORDER_CANCELLED;
 import com.kyn.common.messages.message.TemplateMessageRequest.ORDER_COMPLETED;
 import com.kyn.common.messages.message.TemplateMessageRequest.STOCK_RECEIVED;
-
 import com.kyn.message.application.service.interfaces.MessageHistoryService;
 import com.kyn.message.application.service.interfaces.MessageTemplateService;
 import com.kyn.message.application.service.interfaces.MessagingService;
@@ -32,10 +31,10 @@ public class TemplateMessageRequestProcessorImpl implements TemplateMessageReque
     public Mono<Void> handle(ORDER_COMPLETED request) {
         return messageTemplateService.setTemplateMessage(request.requestItem(), 1)
             .flatMap(templateMessage -> 
-                messagingService.push(templateMessage, request.requestItem().get("userId"), "ORDER_COMPLETED")
+                messagingService.push(templateMessage, request.userId(), "ORDER_COMPLETED")
                     .then(messageHistoryService.save(MessageDtoMapper.toMessageHistoryRequest(
                         templateMessage, 
-                        request.requestItem().get("userId")
+                        request.userId()
                     )))
             )
             .then();
@@ -45,10 +44,10 @@ public class TemplateMessageRequestProcessorImpl implements TemplateMessageReque
     public Mono<Void> handle(ORDER_CANCELLED request) {
         return messageTemplateService.setTemplateMessage(request.requestItem(), 2)
             .flatMap(templateMessage -> 
-                messagingService.push(templateMessage, request.requestItem().get("userId"), "ORDER_CANCELLED")
+                messagingService.push(templateMessage, request.userId(), "ORDER_CANCELLED")
                     .then(messageHistoryService.save(MessageDtoMapper.toMessageHistoryRequest(
                         templateMessage, 
-                        request.requestItem().get("userId")
+                        request.userId()
                     )))
             )
             .then();
@@ -58,10 +57,10 @@ public class TemplateMessageRequestProcessorImpl implements TemplateMessageReque
     public Mono<Void> handle(STOCK_RECEIVED request) {
         return messageTemplateService.setTemplateMessage(request.requestItem(), 3)
             .flatMap(templateMessage -> 
-                messagingService.push(templateMessage, request.requestItem().get("userId"), "STOCK_RECEIVED")
+                messagingService.push(templateMessage, request.userId(), "STOCK_RECEIVED")
                     .then(messageHistoryService.save(MessageDtoMapper.toMessageHistoryRequest(
                         templateMessage, 
-                        request.requestItem().get("userId")
+                        request.userId()
                     )))
             )
             .then();
