@@ -88,10 +88,9 @@ public class RedissonStockServiceImpl implements RedissonStockService {
     }
     
     @Override
-    public Flux<String> refreshAllCache() {
-        String today = LocalDate.now().format(DATE_FORMATTER);
-        
-        return warehouseRepository.findDailyStockSummary(today)
+    public Flux<String> refreshAllCache(boolean isDaily) {
+        String day = isDaily?LocalDate.now().format(DATE_FORMATTER):LocalDate.now().minusDays(1).format(DATE_FORMATTER);
+        return warehouseRepository.findDailyStockSummary(day)
             .flatMap(stock -> {
                 String productIdStr = stock.productId().toString();
                 return stockMap.fastPut(productIdStr, stock.currentStock())

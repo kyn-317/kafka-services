@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.springframework.data.annotation.Id;
-
-import com.kyn.inventory.application.enums.StorageRetrievalType;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(schema = "warehouse_data", name = "warehouse_history")
 public class WarehouseHistory {
 
     @Id
@@ -24,7 +25,8 @@ public class WarehouseHistory {
     private UUID productId;
     private UUID requesterId;
     private UUID orderId;
-    private StorageRetrievalType retrievalType;
+    @Column("storage_retrieval_type")
+    private String storageRetrievalType;
     private Integer quantity;
     private String snapshotDate;
     private LocalDateTime createdAt;

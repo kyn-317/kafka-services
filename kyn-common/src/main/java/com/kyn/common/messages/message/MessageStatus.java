@@ -4,5 +4,6 @@ public enum MessageStatus {
     
     PUSH,
     PUSHED,
-    FAILED
+    FAILED,
+    NOTICED
 }

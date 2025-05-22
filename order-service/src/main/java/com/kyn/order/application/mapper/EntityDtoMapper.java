@@ -6,29 +6,26 @@ import java.util.UUID;
 
 import com.kyn.order.application.entity.OrderWorkFlowAction;
 import com.kyn.order.application.entity.PurchaseOrder;
-import com.kyn.order.common.dto.PurchaseOrderDto;
 import com.kyn.order.common.dto.OrderCreateRequest;
 import com.kyn.order.common.dto.OrderDetails;
 import com.kyn.order.common.dto.OrderWorkflowActionDto;
+import com.kyn.order.common.dto.PurchaseOrderDto;
 import com.kyn.order.common.enums.OrderStatus;
 import com.kyn.order.common.enums.WorkflowAction;
 
 public class EntityDtoMapper {
 
-    public static PurchaseOrderDto toDto(PurchaseOrder entity) {
-        return PurchaseOrderDto.builder()
-                .orderId(entity.getOrderId())
-                .customerId(entity.getCustomerId())
-                .productId(entity.getProductId())
-                .quantity(entity.getQuantity())
-                .unitPrice(entity.getUnitPrice())
-                .amount(entity.getAmount())
-                .status(entity.getStatus())
-                .deliveryDate(entity.getDeliveryDate())
-                .build();
+    public static PurchaseOrder toPurchaseOrder(OrderCreateRequest request) {
+        return PurchaseOrder.builder()
+                            .status(OrderStatus.PENDING)
+                            .customerId(request.customerId())
+                            .productId(request.productId())
+                            .quantity(request.quantity())
+                            .unitPrice(request.unitPrice())
+                            .amount(request.quantity() * request.unitPrice())
+                            .build();
     }
 
-    
     public static PurchaseOrderDto toPurchaseOrderDto(PurchaseOrder purchaseOrder) {
         return PurchaseOrderDto.builder()
                                .orderId(purchaseOrder.getOrderId())

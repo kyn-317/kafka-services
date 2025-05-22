@@ -1,35 +1,21 @@
 package com.kyn.inventory.application.mapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
+import com.kyn.common.dto.OrderDetailDto;
+import com.kyn.common.dto.OrderSummaryDto;
+import com.kyn.common.messages.inventory.CartInventoryResponse;
 import com.kyn.inventory.application.dto.CurrentStock;
 import com.kyn.inventory.application.dto.WarehouseDto;
-import com.kyn.inventory.application.entity.OrderInventory;
+import com.kyn.inventory.application.dto.WarehouseRequestDto;
 import com.kyn.inventory.application.entity.Warehouse;
 import com.kyn.inventory.application.entity.WarehouseHistory;
 import com.kyn.inventory.application.enums.StorageRetrievalType;
-import com.kyn.inventory.common.dto.InventoryDeductRequest;
-import com.kyn.inventory.common.dto.OrderInventoryDto;
 
 public class EntityDtoMapper {
 
-    public static OrderInventory toOrderInventory(InventoryDeductRequest request) {
-        return OrderInventory.builder()
-                             .orderId(request.orderId())
-                             .productId(request.productId())
-                             .quantity(request.quantity())
-                             .build();
-    }
-
-    public static OrderInventoryDto toDto(OrderInventory orderInventory) {
-        return OrderInventoryDto.builder()
-                                .inventoryId(orderInventory.getInventoryId())
-                                .orderId(orderInventory.getOrderId())
-                                .productId(orderInventory.getProductId())
-                                .quantity(orderInventory.getQuantity())
-                                .status(orderInventory.getStatus())
-                                .build();
-    }
 
 
     public static WarehouseHistory toWarehouseHistory(Warehouse warehouse) {
@@ -38,7 +24,7 @@ public class EntityDtoMapper {
             .productId(warehouse.getProductId())
             .requesterId(warehouse.getRequesterId())
             .orderId(warehouse.getOrderId())
-            .retrievalType(warehouse.getRetrievalType())
+            .storageRetrievalType(warehouse.getStorageRetrievalType())
             .quantity(warehouse.getQuantity())
             .snapshotDate(warehouse.getSnapshotDate())
             .createdAt(warehouse.getCreatedAt())
@@ -51,7 +37,7 @@ public class EntityDtoMapper {
             .productId(currentStock.productId())
             .quantity(currentStock.currentStock())
             .snapshotDate(currentStock.snapshotDate())
-            .retrievalType(StorageRetrievalType.BASE)
+            .storageRetrievalType(StorageRetrievalType.BASE.toString())
             .createdAt(LocalDateTime.now())
             .createdBy("SYSTEM")
             .build();
@@ -64,7 +50,7 @@ public class EntityDtoMapper {
             warehouseHistory.getProductId(),
             warehouseHistory.getRequesterId(),
             warehouseHistory.getOrderId(),
-            warehouseHistory.getRetrievalType(),
+            StorageRetrievalType.valueOf(warehouseHistory.getStorageRetrievalType()),
             warehouseHistory.getQuantity(),
             warehouseHistory.getSnapshotDate(),
             warehouseHistory.getCreatedAt(),
@@ -78,7 +64,7 @@ public class EntityDtoMapper {
             warehouse.getProductId(),
             warehouse.getRequesterId(),
             warehouse.getOrderId(),
-            warehouse.getRetrievalType(),
+            StorageRetrievalType.valueOf(warehouse.getStorageRetrievalType()),
             warehouse.getQuantity(),
             warehouse.getSnapshotDate(),
             warehouse.getCreatedAt(),
@@ -86,4 +72,28 @@ public class EntityDtoMapper {
         );
     }
 
+    public static WarehouseRequestDto detailToRequest(OrderDetailDto detail, UUID customerId , StorageRetrievalType retrievalType) {
+
+        return WarehouseRequestDto.builder()
+            .productId(detail.getProductId())
+            .requesterId(customerId)
+            .orderId(detail.getOrderId())
+            .retrievalType(retrievalType)
+            .quantity(detail.getQuantity())
+            .build();
+    }
+
+    public static CartInventoryResponse.Deducted toDeducted(OrderSummaryDto summary, List<UUID> inventoryIds) {
+        return CartInventoryResponse.Deducted.builder()
+            .responseItem(summary)
+            .inventoryIds(inventoryIds)
+            .build();
+    }
+
+    public static CartInventoryResponse.Declined toDeclined(OrderSummaryDto summary, String message) {
+        return CartInventoryResponse.Declined.builder()
+            .responseItem(summary)
+            .message(message)
+            .build();
+    }
 }

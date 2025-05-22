@@ -2,6 +2,7 @@ package com.kyn.message.messaging.mapper;
 
 import com.kyn.common.messages.message.MessageRequest;
 import com.kyn.common.messages.message.MessageResponse;
+import com.kyn.message.application.dto.MessageHistoryRequest;
 import com.kyn.message.common.dto.MessageDto;
 import com.kyn.message.common.dto.PushRequest;
 
@@ -20,6 +21,13 @@ public class MessageDtoMapper {
                                          .userId(dto.userId())
                                          .message(dto.message())
                                          .build();
+    }
+
+    public static MessageHistoryRequest toMessageHistoryRequest(String message, String userId) {
+        return MessageHistoryRequest.builder()
+            .userId(userId)
+            .message(message)
+            .build();
     }
 
 }

@@ -1,7 +1,6 @@
 package com.kyn.inventory.application.service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,7 @@ import com.kyn.inventory.application.service.interfaces.WarehouseSchedulerServic
 import com.kyn.inventory.application.util.FormatUtil;
 
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Service
 
@@ -31,7 +31,7 @@ public class WarehouseSchedulerServiceImpl implements WarehouseSchedulerService 
     @Scheduled(cron = "0 0 0 * * ?") 
     @Transactional
     @Override
-    public void processWarehouseDailyBatch() {
+    public Mono<Void> processWarehouseDailyBatch() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
         LocalDate today = LocalDate.now();
         
@@ -40,23 +40,24 @@ public class WarehouseSchedulerServiceImpl implements WarehouseSchedulerService 
         
         log.info("Starting daily warehouse batch process: {} -> {}", yesterdayStr, todayStr);
         //  save in history 
-        warehouseRepository.findBySnapshotDate(yesterdayStr)
+        return warehouseRepository.findBySnapshotDate(yesterdayStr)
             .map(EntityDtoMapper::toWarehouseHistory)
             .flatMap(warehouseHistoryRepository::save)
             .collectList()
             //  set base stock
             .flatMap(savedHistories -> 
-                warehouseRepository.findDailyStockSummary(todayStr)
+                warehouseRepository.findDailyStockSummary(yesterdayStr)
                     .map(EntityDtoMapper::setBaseStock)
                     .flatMap(warehouseRepository::save)
                     .collectList()
             )
             //  delete yesterday's data
-            .flatMap(savedBases -> warehouseRepository.deleteBySnapshotDate(yesterdayStr)
+            .flatMap(savedBases ->
+                    warehouseRepository.deleteBySnapshotDate(yesterdayStr)
                     .thenReturn(savedBases.size()))
             .doOnSuccess(count -> log.info("Completed daily warehouse batch process: {} -> {}, processed {} products", 
                          yesterdayStr, todayStr, count))
             .doOnError(e -> log.error("Error in daily warehouse batch process", e))
-            .subscribe();
+            .then();
     }
 } 

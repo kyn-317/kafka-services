@@ -1,12 +1,7 @@
 package com.kyn.order.message.config;
 
-import com.kyn.common.messages.Request;
-import com.kyn.common.messages.Response;
-import com.kyn.common.messages.inventory.InventoryRequest;
-import com.kyn.common.messages.payment.PaymentRequest;
-import com.kyn.common.util.MessageConverter;
-import com.kyn.order.message.orchestrator.OrderFulfillmentOrchestrator;
-import lombok.RequiredArgsConstructor;
+import java.util.function.Function;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -14,9 +9,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import reactor.core.publisher.Flux;
 
-import java.util.function.Function;
+import com.kyn.common.messages.Request;
+import com.kyn.common.messages.Response;
+import com.kyn.common.messages.inventory.InventoryRequest;
+import com.kyn.common.messages.payment.PaymentRequest;
+import com.kyn.common.util.MessageConverter;
+import com.kyn.order.message.orchestrator.interfaces.OrderFulfillmentOrchestrator;
+
+import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 
 @Configuration
 @RequiredArgsConstructor

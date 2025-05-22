@@ -1,0 +1,847 @@
+{
+	"info": {
+		"_postman_id": "a5e24dec-d9b8-41ad-8b54-c56d3a5a0bfc",
+		"name": "msa",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34104021"
+	},
+	"item": [
+		{
+			"name": "product",
+			"item": [
+				{
+					"name": "getAllProduct",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/product/findAllProduct",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"product",
+								"findAllProduct"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSingleProduct",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/product/findProductById/e4b57964-be82-4079-8b21-39ecd8803d6e",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"product",
+								"findProductById",
+								"e4b57964-be82-4079-8b21-39ecd8803d6e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getList",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\"e4b57964-be82-4079-8b21-39ecd8803d6e\",\"ba204e26-f21b-4484-ad52-6a24e58e3935\"]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/product/findProductByIds",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"product",
+								"findProductByIds"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "paging",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/product/findProductPaging?size=20&page=1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"product",
+								"findProductPaging"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "20"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cart",
+			"item": [
+				{
+					"name": "createCart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0NjkzMjIzNywiZXhwIjoxNzQ2OTM0MDM3fQ.Mp9uoWrcpn9QYP85nQX7T6e7KMDK_EZJWMwENBeKaHwz27vGN673KyptCU1yvHrF",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"kynauto03178@gmail.com\",\r\n    \"cartItems\":[\r\n        {\r\n            \"productId\":\"47b74c9d-846d-427b-a7e8-b9932f4434ff\",\r\n            \"productName\":\"Costume Sunglasses Clown from IT Sun-Staches Party Favors UV400\",\r\n            \"productPrice\":5.99,\r\n            \"productQuantity\":2\r\n        },\r\n        {\r\n            \"productId\":\"0c58d3d3-0515-4bd6-9dbe-920b3b376560\",\r\n            \"productName\":\"Melissa & Doug Dot-to-Dot# & Letter Coloring Pad 3 Pack (ABC Farm, 123 Pets, ABC-123 Wild Animals)\",\r\n            \"productPrice\":12.74,\r\n            \"productQuantity\":3\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/cart/createCart",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"cart",
+								"createCart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0Njk0MjMzNCwiZXhwIjoxNzQ2OTQ0MTM0fQ.WNK9bVHdF0Jq3B9wWI0_wJY1NAhkkWBoHjuQNapmjB0yFmxmANbT9RFLQVTH_Lsi",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"kynauto03178@gmail.com\",\r\n    \"cartItems\":[]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/cart/getCart",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"cart",
+								"getCart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCart",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0NjkzMDI4NCwiZXhwIjoxNzQ2OTMyMDg0fQ.r1MyNV1i00qafDJmYQWwIZAMZUCaLT39EL8Z5hr8jD_5NPqt5Jlb3EVO7msbcS3j",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"kynauto03178@gmail.com\",\r\n    \"cartItems\":[\r\n        {\r\n            \"productId\":\"ba204e26-f21b-4484-ad52-6a24e58e3935\",\r\n            \"productName\":\"Costume Sunglasses Clown from IT Sun-Staches Party Favors UV400\",\r\n            \"productPrice\":5.99,\r\n            \"productQuantity\":2\r\n        },\r\n        {\r\n            \"productId\":\"e4b57964-be82-4079-8b21-39ecd8803d6e\",\r\n            \"productName\":\"Melissa & Doug Dot-to-Dot# & Letter Coloring Pad 3 Pack (ABC Farm, 123 Pets, ABC-123 Wild Animals)\",\r\n            \"productPrice\":12.74,\r\n            \"productQuantity\":3\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/cart/getCartByEmail/kynauto03178@gmail.com",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"cart",
+								"getCartByEmail",
+								"kynauto03178@gmail.com"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addCartItem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0NjkzNDA5OCwiZXhwIjoxNzQ2OTM1ODk4fQ.AW92sdZM2Sm5Qqr8xTX3N7LUKLg3XvNVlUT2s_96U8A-gV-pmOXNEvNa9HOyguBA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"kynauto03178@gmail.com\",\r\n    \"cartItems\":[\r\n        {\r\n            \"productId\":\"47b74c9d-846d-427b-a7e8-b9932f4434ff\",\r\n            \"productName\":\"Costume Sunglasses Clown from IT Sun-Staches Party Favors UV400\",\r\n            \"productPrice\":5.99,\r\n            \"productQuantity\":4\r\n        },\r\n        {\r\n            \"productId\":\"0c58d3d3-0515-4bd6-9dbe-920b3b376560\",\r\n            \"productName\":\"Melissa & Doug Dot-to-Dot# & Letter Coloring Pad 3 Pack (ABC Farm, 123 Pets, ABC-123 Wild Animals)\",\r\n            \"productPrice\":12.74,\r\n            \"productQuantity\":5\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/cart/addCartItem",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"cart",
+								"addCartItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addCartItem Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0NjkzNDA5OCwiZXhwIjoxNzQ2OTM1ODk4fQ.AW92sdZM2Sm5Qqr8xTX3N7LUKLg3XvNVlUT2s_96U8A-gV-pmOXNEvNa9HOyguBA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"kynauto03178@gmail.com\",\r\n    \"cartItems\":[\r\n        {\r\n            \"productId\":\"ba204e26-f21b-4484-ad52-6a24e58e3935\",\r\n            \"productName\":\"Costume Sunglasses Clown from IT Sun-Staches Party Favors UV400\",\r\n            \"productPrice\":5.99,\r\n            \"productQuantity\":2\r\n        },\r\n        {\r\n            \"productId\":\"190392d6-deb8-4c4a-b449-ccde95225f1b\",\r\n            \"productName\":\"Melissa & Doug Dot-to-Dot# & Letter Coloring Pad 3 Pack (ABC Farm, 123 Pets, ABC-123 Wild Animals)\",\r\n            \"productPrice\":12.74,\r\n            \"productQuantity\":3\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/cart/updateCartItem",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"cart",
+								"updateCartItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteCartItem",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0NjkzNDA5OCwiZXhwIjoxNzQ2OTM1ODk4fQ.AW92sdZM2Sm5Qqr8xTX3N7LUKLg3XvNVlUT2s_96U8A-gV-pmOXNEvNa9HOyguBA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"kynauto03178@gmail.com\",\r\n    \"cartItems\":[\r\n        {\r\n            \"productId\":\"47b74c9d-846d-427b-a7e8-b9932f4434ff\",\r\n            \"productName\":\"Costume Sunglasses Clown from IT Sun-Staches Party Favors UV400\",\r\n            \"productPrice\":5.99,\r\n            \"productQuantity\":2\r\n        },\r\n        {\r\n            \"productId\":\"0c58d3d3-0515-4bd6-9dbe-920b3b376560\",\r\n            \"productName\":\"Melissa & Doug Dot-to-Dot# & Letter Coloring Pad 3 Pack (ABC Farm, 123 Pets, ABC-123 Wild Animals)\",\r\n            \"productPrice\":12.74,\r\n            \"productQuantity\":3\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/cart/deleteCartItem",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"cart",
+								"deleteCartItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clearCart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0NjkzNDA5OCwiZXhwIjoxNzQ2OTM1ODk4fQ.AW92sdZM2Sm5Qqr8xTX3N7LUKLg3XvNVlUT2s_96U8A-gV-pmOXNEvNa9HOyguBA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"kynauto03178@gmail.com\",\r\n    \"cartItems\":[\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/cart/clearCart",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"cart",
+								"clearCart"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "User_Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\" :\"kyn3178\",\r\n    \"userName\" :\"kihyun\",\r\n    \"email\" :\"kynauto03178@gmail.com\",\r\n    \"password\": \"abcd1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/user/create",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"user",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User_Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" :\"kynauto03178@gmail.com\",\r\n    \"password\": \"abcd1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/user/login",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User_isLogin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0Njg1NTc0NSwiZXhwIjoxNzQ2ODU3NTQ1fQ.Q48tdDx_V42vBZaub-2pAZVo4p0icd5AKqx9yTbqpg1K_d1ORy6J74glcA_DOFPC",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/user/isLogin",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"user",
+								"isLogin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User_addRole",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzQ2ODQ4NDQ1LCJleHAiOjE3NDY4NTAyNDV9.Jb0rliJ6IlMwJRuPe7Fc-NB7GR7UyzmK4B3oviSJWmRmoSXhmaMRL3v8VBgcYTrz",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userInfoId\":\"0a5e1a6b-af15-4dc6-a7b1-67bfc5783778\",\r\n    \"userId\":\"kyn3178\",\r\n    \"email\":\"kynauto03178@gmail.com\",\r\n    \"role\":\"ADMIN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/user/addRole",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"user",
+								"addRole"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User_logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzQ2ODU3MDgzLCJleHAiOjE3NDY4NTg4ODN9.w6kCXvWeELvMPNGJlsxYJwpoHip9jbGk4Sp_7p_epDvdc5_B5oH5WU1fktfDXqxp",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/user/userLogout",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"user",
+								"userLogout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User_searchEmail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzQ2ODU3MDgzLCJleHAiOjE3NDY4NTg4ODN9.w6kCXvWeELvMPNGJlsxYJwpoHip9jbGk4Sp_7p_epDvdc5_B5oH5WU1fktfDXqxp",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/user/searchEmail/kynauto03178@gmail.com",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"user",
+								"searchEmail",
+								"kynauto03178@gmail.com"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User_searchUserId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzQ2ODU3MDgzLCJleHAiOjE3NDY4NTg4ODN9.w6kCXvWeELvMPNGJlsxYJwpoHip9jbGk4Sp_7p_epDvdc5_B5oH5WU1fktfDXqxp",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/user/searchUserId/kyn3178",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"user",
+								"searchUserId",
+								"kyn3178"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User_searchUserName",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzQ2ODU3MDgzLCJleHAiOjE3NDY4NTg4ODN9.w6kCXvWeELvMPNGJlsxYJwpoHip9jbGk4Sp_7p_epDvdc5_B5oH5WU1fktfDXqxp",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/user/searchUserName/kihyun",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"user",
+								"searchUserName",
+								"kihyun"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User_searchUserName Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzQ2ODU3MDgzLCJleHAiOjE3NDY4NTg4ODN9.w6kCXvWeELvMPNGJlsxYJwpoHip9jbGk4Sp_7p_epDvdc5_B5oH5WU1fktfDXqxp",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{gateway_url}}/user/searchId/0a5e1a6b-af15-4dc6-a7b1-67bfc5783778",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"user",
+								"searchId",
+								"0a5e1a6b-af15-4dc6-a7b1-67bfc5783778"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "message",
+			"item": [
+				{
+					"name": "messageStream",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0Njk1NDAxNywiZXhwIjoxNzQ2OTU1ODE3fQ.QOPSWJZqc5mBxWleUa4w9UzesFoZdeYlktfj5mJlsanwSp8uvDo5ZYQZqu4WY_nR",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\" :\"kyn3178\",\r\n    \"userName\" :\"kihyun\",\r\n    \"email\" :\"kynauto03178@gmail.com\",\r\n    \"password\": \"abcd1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/message/messageStream/stream/694476f6-9513-410b-a5de-4b252c7012c0",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"message",
+								"messageStream",
+								"stream",
+								"694476f6-9513-410b-a5de-4b252c7012c0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "messageStream2",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0Njk1NDAxNywiZXhwIjoxNzQ2OTU1ODE3fQ.QOPSWJZqc5mBxWleUa4w9UzesFoZdeYlktfj5mJlsanwSp8uvDo5ZYQZqu4WY_nR",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\" :\"kyn3178\",\r\n    \"userName\" :\"kihyun\",\r\n    \"email\" :\"kynauto03178@gmail.com\",\r\n    \"password\": \"abcd1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/message/messageStream/stream/694476f6-9513-410b-a5de-4b252c7012c1",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"message",
+								"messageStream",
+								"stream",
+								"694476f6-9513-410b-a5de-4b252c7012c1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publishMessage",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0Njk1NDAxNywiZXhwIjoxNzQ2OTU1ODE3fQ.QOPSWJZqc5mBxWleUa4w9UzesFoZdeYlktfj5mJlsanwSp8uvDo5ZYQZqu4WY_nR",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"orderId\":\"cbb2464b-cd7a-4138-ab68-8989690220c3\",\r\n    \"userId\":\"694476f6-9513-410b-a5de-4b252c7012c0\",\r\n    \"message\":\"messagePublish\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/message/messageStream/publish/694476f6-9513-410b-a5de-4b252c7012c0",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"message",
+								"messageStream",
+								"publish",
+								"694476f6-9513-410b-a5de-4b252c7012c0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publishMessageAll",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJreW5hdXRvMDMxNzhAZ21haWwuY29tIiwiYXV0aCI6WyJST0xFX1VTRVIiLCJST0xFX0FETUlOIl0sImlhdCI6MTc0Njk1NDAxNywiZXhwIjoxNzQ2OTU1ODE3fQ.QOPSWJZqc5mBxWleUa4w9UzesFoZdeYlktfj5mJlsanwSp8uvDo5ZYQZqu4WY_nR",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"wholeMessage\",\r\n    \"message\":\"messagePublish\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{gateway_url}}/message/messageStream/publish",
+							"host": [
+								"{{gateway_url}}"
+							],
+							"path": [
+								"message",
+								"messageStream",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "gateway_url",
+			"value": "http://localhost:8070",
+			"type": "string"
+		}
+	]
+}

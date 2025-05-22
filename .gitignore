@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 order-service/src/main/resources/application.properties
+kafka-services.code-workspace

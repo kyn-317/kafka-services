@@ -1,9 +1,11 @@
 package com.kyn.common.messages.payment;
 
-import com.kyn.common.messages.Response;
-import lombok.Builder;
-
 import java.util.UUID;
+
+import com.kyn.common.dto.OrderSummaryDto;
+import com.kyn.common.messages.Response;
+
+import lombok.Builder;
 
 public sealed interface PaymentResponse extends Response {
 
@@ -14,7 +16,7 @@ public sealed interface PaymentResponse extends Response {
                      Integer amount) implements PaymentResponse {
 
     }
-
+    
     @Builder
     record Declined(UUID orderId,
                     String message) implements PaymentResponse {

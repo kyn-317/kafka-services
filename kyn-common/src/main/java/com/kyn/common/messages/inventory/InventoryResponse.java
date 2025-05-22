@@ -1,9 +1,10 @@
 package com.kyn.common.messages.inventory;
 
-import com.kyn.common.messages.Response;
-import lombok.Builder;
-
 import java.util.UUID;
+
+import com.kyn.common.messages.Response;
+
+import lombok.Builder;
 
 public sealed interface InventoryResponse extends Response {
 
@@ -20,5 +21,4 @@ public sealed interface InventoryResponse extends Response {
                     String message) implements InventoryResponse {
 
     }
-
 }

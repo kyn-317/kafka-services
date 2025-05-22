@@ -1,7 +1,7 @@
 spring:
   cloud:
     function:
-      definition: processor
+      definition: consumer
     stream:
       default:
         producer:
@@ -9,22 +9,19 @@ spring:
         consumer:
           useNativeDecoding: true
       bindings:
-        processor-in-0:
-          destination: message-request
-          group: message-service-group
+        consumer-in-0:
+          destination: message-request-channel
           consumer:
             use-native-decoding: true
-        processor-out-0:
-          destination: message-response
       kafka:
         binder:
           consumer-properties:
             "value.deserializer": org.springframework.kafka.support.serializer.JsonDeserializer
             "key.deserializer": org.apache.kafka.common.serialization.StringDeserializer
-            "auto.offset.reset": "earliest"
+            "auto.offset.reset": "latest"
             "spring.json.trusted.packages": "com.kyn.common.messages.*"
           producer-properties:
             "value.serializer": org.springframework.kafka.support.serializer.JsonSerializer
             "key.serializer": org.apache.kafka.common.serialization.StringSerializer
 server:
-  port: 8081
+  port: 8085

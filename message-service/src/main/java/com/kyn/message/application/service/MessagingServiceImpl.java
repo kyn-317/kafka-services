@@ -5,47 +5,30 @@ import org.springframework.stereotype.Service;
 import com.kyn.common.messages.message.MessageRequest;
 import com.kyn.message.application.dto.MessageData;
 import com.kyn.message.application.dto.ServerSentMessage;
-import com.kyn.message.application.entity.MessageHistory;
-import com.kyn.message.application.mapper.EntityDtoMapper;
-import com.kyn.message.application.repository.MessageHistoryRepository;
 import com.kyn.message.application.service.interfaces.MessageService;
 import com.kyn.message.application.service.interfaces.MessagingService;
-import com.kyn.message.common.dto.MessageDto;
-import com.kyn.message.common.dto.PushRequest;
-import com.kyn.message.messaging.mapper.MessageDtoMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
-import java.util.UUID;
 
 @Service
+@Slf4j
 public class MessagingServiceImpl implements MessagingService {
 
     private final MessageService messageService;
-    private final MessageHistoryRepository messageHistoryRepository;
 
-    public MessagingServiceImpl(MessageService messageService, MessageHistoryRepository messageHistoryRepository) {
+    public MessagingServiceImpl(MessageService messageService) {
         this.messageService = messageService;
-        this.messageHistoryRepository = messageHistoryRepository;
     }
 
     @Override
-    public Mono<MessageDto> push(PushRequest request) {
-        
+    public Mono<Void> push(String message, String userId, String type) {
         var serverSentMessage = ServerSentMessage.builder()
-            .type("push")
-            .data(MessageData.builder()
-                .message(request)
-                .build())
-            .build();
-
-        var messageHistory = MessageHistory.builder()
-            .userId(request.userId())
-            .orderId(request.orderId())
-            .message(request.message())
-            .build();
-        
-        return messageService.sendEventToClient(request.userId().toString(), serverSentMessage)
-        .then(messageHistoryRepository.save(messageHistory))
-        .thenReturn(EntityDtoMapper.toDto(messageHistory));
+                .type(type)
+                .data(MessageData.builder()
+                        .message(message)
+                        .build())
+                .build();
+        return messageService.sendEventToClient(userId, serverSentMessage);
     }
 }

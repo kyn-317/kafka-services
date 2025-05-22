@@ -1,9 +1,11 @@
 package com.kyn.common.messages.inventory;
 
-import com.kyn.common.messages.Request;
-import lombok.Builder;
-
 import java.util.UUID;
+
+import com.kyn.common.dto.OrderSummaryDto;
+import com.kyn.common.messages.Request;
+
+import lombok.Builder;
 
 public sealed interface InventoryRequest extends Request {
 

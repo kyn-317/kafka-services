@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -18,31 +17,31 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BaseDocuments {
 
-    @Field("REGR_ID")
+    @Field("CREATED_BY")
     @CreatedBy
-    private String regrId;
+    private String createdBy;
 
-    @Field("REG_DT")
+    @Field("CREATED_DT")
     @CreatedDate
-    private LocalDateTime regDt;
+    private LocalDateTime createdDt;
 
-    @Field("AMDR_ID")
+    @Field("UPDATED_BY")
     @LastModifiedBy
-    private String amdrId;
+    private String updatedBy;
 
-    @Field("AMD_DT")
+    @Field("UPDATED_DT")
     @LastModifiedDate
-    private LocalDateTime amdDt;
+    private LocalDateTime updatedDt;
 
     public void insertDocument(String id) {
-        this.regrId = id;
-        this.regDt = LocalDateTime.now();
-        this.amdrId = id;
-        this.amdDt = LocalDateTime.now();
+        this.createdBy = id;
+        this.createdDt = LocalDateTime.now();
+        this.updatedBy = id;
+        this.updatedDt = LocalDateTime.now();
     }
 
     public void updateDocument(String id) {
-        this.amdrId = id;
-        this.amdDt = LocalDateTime.now();
+        this.updatedBy = id;
+        this.updatedDt = LocalDateTime.now();
     }
 }
