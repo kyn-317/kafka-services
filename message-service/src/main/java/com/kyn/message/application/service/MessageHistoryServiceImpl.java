@@ -1,12 +1,9 @@
 package com.kyn.message.application.service;
 
-import java.util.UUID;
-
 import org.springframework.stereotype.Service;
 
 import com.kyn.message.application.dto.MessageHistoryRequest;
 import com.kyn.message.application.dto.MessageHistoryResponse;
-import com.kyn.message.application.entity.MessageHistory;
 import com.kyn.message.application.mapper.MessageHistoryMapper;
 import com.kyn.message.application.repository.MessageHistoryRepository;
 import com.kyn.message.application.service.interfaces.MessageHistoryService;
@@ -25,7 +22,7 @@ public class MessageHistoryServiceImpl implements MessageHistoryService {
     @Override
     public Mono<MessageHistoryResponse> save(MessageHistoryRequest messageHistoryRequest) {
         return messageHistoryRepository
-            .save(MessageHistoryMapper.HistoryRequestToEntity(messageHistoryRequest))
-            .map(MessageHistoryMapper::HistoryEntityToResponse);
+                .save(MessageHistoryMapper.HistoryRequestToEntity(messageHistoryRequest))
+                .map(MessageHistoryMapper::HistoryEntityToResponse);
     }
 }

@@ -16,32 +16,19 @@ import reactor.core.publisher.Mono;
 public class MessagingServiceImpl implements MessagingService {
 
     private final MessageService messageService;
+
     public MessagingServiceImpl(MessageService messageService) {
         this.messageService = messageService;
     }
 
-
     @Override
-    public Mono<Void> push(MessageRequest.Push request) {
-        
+    public Mono<Void> push(String message, String userId, String type) {
         var serverSentMessage = ServerSentMessage.builder()
-            .type("push")
-            .data(MessageData.builder()
-                .message(request)
-                .build())
-            .build();
-        //send message to client
-        return messageService.sendEventToClient(request.userId().toString(), serverSentMessage);
-    }
-
-    @Override
-    public Mono<Void> push(String message, String userId , String type) {
-        var serverSentMessage = ServerSentMessage.builder()
-            .type(type)
-            .data(MessageData.builder()
-            .message(message)
-            .build())
-        .build();
+                .type(type)
+                .data(MessageData.builder()
+                        .message(message)
+                        .build())
+                .build();
         return messageService.sendEventToClient(userId, serverSentMessage);
     }
 }
