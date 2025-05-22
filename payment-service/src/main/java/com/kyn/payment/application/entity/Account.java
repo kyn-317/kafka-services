@@ -16,12 +16,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-@Table(schema = "payment_data", name = "customer")
+@Table(schema = "payment_data", name = "account")
 public class Account extends BaseDocuments {
 
     @Id
     private UUID id;
-    private String email;
+    private UUID customerId;
     private Double balance;
 
 }

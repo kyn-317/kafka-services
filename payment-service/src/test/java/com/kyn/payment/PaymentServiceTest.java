@@ -36,15 +36,15 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
     @Autowired
     private StreamBridge streamBridge;
 
-    private Account getAccount(String email){
-        return this.repository.findByEmail(email).block();
+    private Account getAccount(UUID customerId){
+        return this.repository.findByCustomerId(customerId).block();
     }
 
     @Test
     public void processAndRefundTest(){
 
         var orderId = UUID.randomUUID();
-        var account = getAccount("sam@gmail.com");
+        var account = getAccount(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
         var processRequest = TestDataUtil.createProcessRequest(orderId, account.getId(), 3.0);
         var refundRequest = TestDataUtil.createRefundRequest(orderId);
         
@@ -102,7 +102,7 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
     @Test// test case for insufficient balance
     public void insufficientBalanceTest(){
         var orderId = UUID.randomUUID();
-        var account = getAccount("mike@gmail.com");
+        var account = getAccount(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
         var processRequest = TestDataUtil.createProcessRequest(orderId, account.getId(), 101.0);
         expectResponse(processRequest, CartPaymentResponse.Declined.class, e -> {
             Assertions.assertEquals(orderId, e.responseItem().getOrderId());

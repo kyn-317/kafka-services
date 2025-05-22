@@ -39,7 +39,8 @@ public class AccountSearchingServiceImpl implements AccountSearchingService {
 
     @Override
     public Flux<CustomerPayment> getPaymentByCustomerId(UUID customerId) {
-        return paymentRepository.findByCustomerId(customerId);
+        return accountRepository.findByCustomerId(customerId)
+        .flatMapMany(account -> paymentRepository.findByAccountId(account.getId()));
     }
     
 }

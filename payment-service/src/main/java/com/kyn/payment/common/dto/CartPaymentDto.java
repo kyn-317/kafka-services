@@ -9,7 +9,7 @@ import lombok.Builder;
 @Builder
 public record CartPaymentDto(UUID paymentId,
                          UUID orderId,
-                         UUID customerId,
+                         UUID accountId,
                          Double amount,
                          PaymentStatus status) {
 }

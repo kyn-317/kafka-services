@@ -35,7 +35,7 @@ public class CartPaymentServiceImpl implements CartPaymentService {
     public Mono<CartPaymentDto> process(CartPaymentProcessRequest request) {
         return DuplicateEventValidator.validate(
             this.paymentRepository.existsByOrderId(request.orderId()),
-            this.accountRepository.findById(request.customerId())
+            this.accountRepository.findByCustomerId(request.customerId())
         ).
         switchIfEmpty(ACCOUNT_NOT_FOUND)
         .filter(c -> c.getBalance() >= request.amount())
@@ -44,7 +44,7 @@ public class CartPaymentServiceImpl implements CartPaymentService {
         .doOnNext(dto -> log.info("payment processed for {}", dto.orderId()));
     }    
     private Mono<CartPaymentDto> deductPayment(Account account, CartPaymentProcessRequest request) {
-        var customerPayment = EntityDtoMapper.toCustomerPayment(request);
+        var customerPayment = EntityDtoMapper.toCustomerPayment(request, account.getId());
         account.setBalance(account.getBalance() - request.amount());
         customerPayment.setStatus(PaymentStatus.PROCESSED);
         return this.accountRepository.save(account)
@@ -55,7 +55,7 @@ public class CartPaymentServiceImpl implements CartPaymentService {
     @Override
     public Mono<CartPaymentDto> refund(UUID orderId) {    
         return this.paymentRepository.findByOrderIdAndStatus(orderId, PaymentStatus.PROCESSED)
-            .zipWhen(cp -> this.accountRepository.findById(cp.getCustomerId()))
+            .zipWhen(cp -> this.accountRepository.findById(cp.getAccountId()))
             .flatMap(t -> this.refundPayment(t.getT1(), t.getT2()))
             .doOnNext(dto -> log.info("refunded amount {} for {}", dto.amount(), dto.orderId()));
 

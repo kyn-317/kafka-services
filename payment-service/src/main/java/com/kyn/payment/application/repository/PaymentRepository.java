@@ -18,5 +18,5 @@ public interface PaymentRepository extends ReactiveCrudRepository<CustomerPaymen
 
     Mono<CustomerPayment> findByOrderIdAndStatus(UUID orderId, PaymentStatus status);
 
-    Flux<CustomerPayment> findByCustomerId(UUID customerId);
+    Flux<CustomerPayment> findByAccountId(UUID accountId);
 }
