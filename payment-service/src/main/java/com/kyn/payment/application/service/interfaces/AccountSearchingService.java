@@ -2,7 +2,7 @@ package com.kyn.payment.application.service.interfaces;
 
 import java.util.UUID;
 
-import com.kyn.payment.application.entity.Customer;
+import com.kyn.payment.application.entity.Account;
 import com.kyn.payment.application.entity.CustomerPayment;
 
 import reactor.core.publisher.Flux;
@@ -10,9 +10,9 @@ import reactor.core.publisher.Mono;
 
 public interface AccountSearchingService {
     
-    Flux<Customer> getAllCustomer();
+    Flux<Account> getAllAccount();
 
-    Mono<Customer> getRandomCustomer();
+    Mono<Account> getRandomAccount();
     
     Flux<CustomerPayment> getPaymentByCustomerId(UUID customerId);
 }

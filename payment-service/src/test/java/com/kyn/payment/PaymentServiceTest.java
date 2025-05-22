@@ -14,8 +14,8 @@ import org.springframework.test.context.TestPropertySource;
 
 import com.kyn.common.messages.CartRequest;
 import com.kyn.common.messages.payment.CartPaymentResponse;
-import com.kyn.payment.application.entity.Customer;
-import com.kyn.payment.application.repository.CustomerRepository;
+import com.kyn.payment.application.entity.Account;
+import com.kyn.payment.application.repository.AccountRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,12 +31,12 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
     private static final Flux<CartPaymentResponse> resFlux = resSink.asFlux().cache(0);
 
     @Autowired
-    private CustomerRepository repository;
+    private AccountRepository repository;
 
     @Autowired
     private StreamBridge streamBridge;
 
-    private Customer getCustomer(String email){
+    private Account getAccount(String email){
         return this.repository.findByEmail(email).block();
     }
 
@@ -44,8 +44,8 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
     public void processAndRefundTest(){
 
         var orderId = UUID.randomUUID();
-        var customer = getCustomer("sam@gmail.com");
-        var processRequest = TestDataUtil.createProcessRequest(orderId, customer.getId(), 3.0);
+        var account = getAccount("sam@gmail.com");
+        var processRequest = TestDataUtil.createProcessRequest(orderId, account.getId(), 3.0);
         var refundRequest = TestDataUtil.createRefundRequest(orderId);
         
         // process payment
@@ -56,7 +56,7 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
         });
 
         // check balance
-        this.repository.findById(customer.getId())
+        this.repository.findById(account.getId())
                        .as(StepVerifier::create)
                        .consumeNextWith(c -> Assertions.assertEquals(97, c.getBalance()))
                        .verifyComplete();
@@ -69,7 +69,7 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
         expectNoResponse(refundRequest);
 
         // check balance
-        this.repository.findById(customer.getId())
+        this.repository.findById(account.getId())
                        .as(StepVerifier::create)
                        .consumeNextWith(c -> Assertions.assertEquals(100, c.getBalance()))
                        .verifyComplete();
@@ -82,7 +82,7 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
         var refundRequest = TestDataUtil.createRefundRequest(orderId);
         expectNoResponse(refundRequest);
         this.repository.findAll()
-                       .map(Customer::getBalance)
+                       .map(Account::getBalance)
                        .distinct()
                        .as(StepVerifier::create)
                        .consumeNextWith(b -> Assertions.assertEquals(100, b))
@@ -102,8 +102,8 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
     @Test// test case for insufficient balance
     public void insufficientBalanceTest(){
         var orderId = UUID.randomUUID();
-        var customer = getCustomer("mike@gmail.com");
-        var processRequest = TestDataUtil.createProcessRequest(orderId, customer.getId(), 101.0);
+        var account = getAccount("mike@gmail.com");
+        var processRequest = TestDataUtil.createProcessRequest(orderId, account.getId(), 101.0);
         expectResponse(processRequest, CartPaymentResponse.Declined.class, e -> {
             Assertions.assertEquals(orderId, e.responseItem().getOrderId());
             Assertions.assertEquals("Customer does not have enough balance", e.message());

@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=false)
 @Table(schema = "payment_data", name = "customer")
-public class Customer extends BaseDocuments {
+public class Account extends BaseDocuments {
 
     @Id
     private UUID id;
