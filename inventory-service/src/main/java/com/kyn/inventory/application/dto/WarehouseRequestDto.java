@@ -13,4 +13,6 @@ public record WarehouseRequestDto(
     UUID orderId,
     StorageRetrievalType retrievalType,
     Integer quantity
-) {}
+) {
+    // Builder will be generated automatically for records
+}

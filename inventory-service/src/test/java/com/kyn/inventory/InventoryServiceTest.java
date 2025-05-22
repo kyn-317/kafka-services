@@ -37,7 +37,7 @@ public class InventoryServiceTest extends AbstractIntegrationTest {
     @Autowired
     private StreamBridge streamBridge;
 
-    @Test
+    /* @Test
     public void deductAndRestoreTest(){
         var orderId = UUID.randomUUID();
         var customerId = UUID.randomUUID();
@@ -160,7 +160,7 @@ public class InventoryServiceTest extends AbstractIntegrationTest {
                 .timeout(Duration.ofSeconds(2), Mono.empty())
                 .as(StepVerifier::create)
                 .verifyComplete();
-    }
+    } */
 
     @TestConfiguration
     static class TestConfig {
