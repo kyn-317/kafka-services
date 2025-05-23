@@ -66,7 +66,7 @@ public class CartOrderServiceImpl implements CartOrderService {
         var customerId = cart.customerId().toString();
         return productDetailService.getCartByCartId(cart.cart().cartItems()).collectList()
             .map(productBasDtos -> CartMapper.toCartResponse(cart, productBasDtos))
-            .map( item -> OrderByCart.builder().customerId(UUID.fromString(customerId)).cart(item).build())
+            .map(item -> OrderByCart.builder().customerId(UUID.fromString(customerId)).cart(item).build())
             .flatMap(this::placeOrder)
             .doOnNext(cartEventListener::emitOrderCreated);
     }
