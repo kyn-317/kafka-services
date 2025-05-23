@@ -18,7 +18,6 @@ import com.kyn.common.dto.OrderDetailDto;
 import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.common.messages.inventory.CartInventoryRequest;
 import com.kyn.common.messages.inventory.CartInventoryResponse;
-import com.kyn.inventory.application.repository.WarehouseRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

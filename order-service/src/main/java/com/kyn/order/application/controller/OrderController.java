@@ -14,7 +14,6 @@ import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.order.common.dto.OrderByCart;
 import com.kyn.order.common.dto.OrderCreateRequest;
 import com.kyn.order.common.dto.OrderDetails;
-import com.kyn.order.common.dto.OrderSummary;
 import com.kyn.order.common.dto.PurchaseOrderDto;
 import com.kyn.order.common.service.CartOrderService;
 import com.kyn.order.common.service.OrderService;

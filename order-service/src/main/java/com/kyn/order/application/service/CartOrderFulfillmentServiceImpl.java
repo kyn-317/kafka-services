@@ -10,7 +10,6 @@ import com.kyn.order.application.entity.Order;
 import com.kyn.order.application.mapper.CartMapper;
 import com.kyn.order.application.repository.OrderDetailRepository;
 import com.kyn.order.application.repository.OrderRepository;
-import com.kyn.order.common.dto.OrderDto;
 import com.kyn.order.common.enums.OrderStatus;
 import com.kyn.order.common.service.CartOrderFulfillmentService;
 
