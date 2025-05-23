@@ -21,6 +21,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
 import reactor.test.StepVerifier;
+
 @TestPropertySource(properties = {
         "spring.cloud.function.definition=processor;responseConsumer",
         "spring.cloud.stream.bindings.responseConsumer-in-0.destination=payment-response"
@@ -36,18 +37,19 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
     @Autowired
     private StreamBridge streamBridge;
 
-    private Account getAccount(UUID customerId){
+    private Account getAccount(UUID customerId) {
         return this.repository.findByCustomerId(customerId).block();
     }
 
     @Test
-    public void processAndRefundTest(){
+    public void processAndRefundTest() {
 
         var orderId = UUID.randomUUID();
-        var account = getAccount(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
-        var processRequest = TestDataUtil.createProcessRequest(orderId, account.getId(), 3.0);
+        var customerId= UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+        var account = getAccount(customerId);
+        var processRequest = TestDataUtil.createProcessRequest(orderId, customerId, 3.0);
         var refundRequest = TestDataUtil.createRefundRequest(orderId);
-        
+
         // process payment
         expectResponse(processRequest, CartPaymentResponse.Processed.class, e -> {
             Assertions.assertNotNull(e.paymentId());
@@ -57,10 +59,9 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
 
         // check balance
         this.repository.findById(account.getId())
-                       .as(StepVerifier::create)
-                       .consumeNextWith(c -> Assertions.assertEquals(97, c.getBalance()))
-                       .verifyComplete();
-
+                .as(StepVerifier::create)
+                .consumeNextWith(c -> Assertions.assertEquals(97, c.getBalance()))
+                .verifyComplete();
 
         // duplicate request
         expectNoResponse(processRequest);
@@ -70,47 +71,48 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
 
         // check balance
         this.repository.findById(account.getId())
-                       .as(StepVerifier::create)
-                       .consumeNextWith(c -> Assertions.assertEquals(100, c.getBalance()))
-                       .verifyComplete();
+                .as(StepVerifier::create)
+                .consumeNextWith(c -> Assertions.assertEquals(100, c.getBalance()))
+                .verifyComplete();
 
     }
 
     @Test // please remove this. should be covered as part of unit tests
-    public void refundWithoutProcessTest(){
+    public void refundWithoutProcessTest() {
         var orderId = UUID.randomUUID();
         var refundRequest = TestDataUtil.createRefundRequest(orderId);
         expectNoResponse(refundRequest);
         this.repository.findAll()
-                       .map(Account::getBalance)
-                       .distinct()
-                       .as(StepVerifier::create)
-                       .consumeNextWith(b -> Assertions.assertEquals(100, b))
-                       .verifyComplete();
+                .map(Account::getBalance)
+                .distinct()
+                .as(StepVerifier::create)
+                .consumeNextWith(b -> Assertions.assertEquals(100, b))
+                .verifyComplete();
     }
 
-    @Test// test case for customer not found
-    public void customerNotFoundTest(){
+    @Test // test case for customer not found
+    public void customerNotFoundTest() {
         var orderId = UUID.randomUUID();
-        var processRequest = TestDataUtil.createProcessRequest(orderId, UUID.randomUUID(), 3.0);
+        var customerId = UUID.fromString("123e4567-e89b-12d3-a456-426614174999");
+        var processRequest = TestDataUtil.createProcessRequest(orderId, customerId, 3.0);
         expectResponse(processRequest, CartPaymentResponse.Declined.class, e -> {
             Assertions.assertEquals(orderId, e.responseItem().getOrderId());
             Assertions.assertEquals("Customer not found", e.message());
         });
     }
 
-    @Test// test case for insufficient balance
-    public void insufficientBalanceTest(){
+    @Test // test case for insufficient balance
+    public void insufficientBalanceTest() {
         var orderId = UUID.randomUUID();
-        var account = getAccount(UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
-        var processRequest = TestDataUtil.createProcessRequest(orderId, account.getId(), 101.0);
+        var customerId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+        var processRequest = TestDataUtil.createProcessRequest(orderId, customerId, 101.0);
         expectResponse(processRequest, CartPaymentResponse.Declined.class, e -> {
             Assertions.assertEquals(orderId, e.responseItem().getOrderId());
             Assertions.assertEquals("Customer does not have enough balance", e.message());
         });
     }
 
-    private <T> void expectResponse(CartRequest request, Class<T> type, Consumer<T> assertion){
+    private <T> void expectResponse(CartRequest request, Class<T> type, Consumer<T> assertion) {
         resFlux
                 .doFirst(() -> this.streamBridge.send("payment-request", request))
                 .timeout(Duration.ofSeconds(2), Mono.empty())
@@ -120,7 +122,7 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
                 .verifyComplete();
     }
 
-    private void expectNoResponse(CartRequest request){
+    private void expectNoResponse(CartRequest request) {
         resFlux
                 .doFirst(() -> this.streamBridge.send("payment-request", request))
                 .timeout(Duration.ofSeconds(2), Mono.empty())
@@ -132,7 +134,7 @@ public class PaymentServiceTest extends AbstractIntegrationTest {
     static class TestConfig {
 
         @Bean
-        public Consumer<Flux<CartPaymentResponse>> responseConsumer(){
+        public Consumer<Flux<CartPaymentResponse>> responseConsumer() {
             return f -> f.doOnNext(resSink::tryEmitNext).subscribe();
         }
 
