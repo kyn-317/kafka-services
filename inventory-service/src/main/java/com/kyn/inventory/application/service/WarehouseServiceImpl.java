@@ -10,6 +10,7 @@ import com.kyn.inventory.application.dto.WarehouseDto;
 import com.kyn.inventory.application.dto.WarehouseRequestDto;
 import com.kyn.inventory.application.dto.WarehouseSearch;
 import com.kyn.inventory.application.entity.Warehouse;
+import com.kyn.inventory.application.enums.StorageRetrievalType;
 import com.kyn.inventory.application.mapper.EntityDtoMapper;
 import com.kyn.inventory.application.repository.WarehouseRepository;
 import com.kyn.inventory.application.service.interfaces.WarehouseService;
@@ -30,15 +31,14 @@ public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
     @Override
     public Mono<Warehouse> deduct(WarehouseRequestDto request) {
-        return 
-         DuplicateEventValidator.validate(
+        return DuplicateEventValidator.validate(
             this.warehouseRepository.existsByOrderIdAndRetrievalTypeAndProductId(request.orderId(), request.retrievalType().toString(), request.productId()),
             this.warehouseRepository.findCurrentStockWithDetails(request.productId())
-         )
-         .filter(currentStock -> currentStock.currentStock() >= request.quantity())
-         .switchIfEmpty(OUT_OF_STOCK)
-         .flatMap(currentStock -> save(request))
-         .doOnNext(onNext -> log.info("deduct call {}", onNext));
+            )
+            .filter(currentStock -> currentStock.currentStock() >= request.quantity())
+            .switchIfEmpty(OUT_OF_STOCK)
+            .flatMap(currentStock -> save(request))
+            .doOnNext(onNext -> log.info("deduct call {}", onNext));
     }
     
 
@@ -49,12 +49,19 @@ public class WarehouseServiceImpl implements WarehouseService {
             warehouseRepository.findByOrderIdAndProductIdAndRetrievalType(
                 request.orderId(), 
                 request.productId(), 
-                "BASE"
+                getRetrievalTypeWhenRestore(request)
             )
             .filter(warehouse -> warehouse.getQuantity() == request.quantity())
             .switchIfEmpty(Mono.error(new IllegalArgumentException("No matching base retrieval record found")))
-            .flatMap(warehouse -> save(request))
-        );
+            .flatMap(warehouse -> save(request)));
+    }
+
+    private String getRetrievalTypeWhenRestore(WarehouseRequestDto request) {
+        return switch (request.retrievalType()) {
+            case RECEIVING -> StorageRetrievalType.RECEIVING_CANCEL.toString();
+            case RETRIEVAL -> StorageRetrievalType.RETRIEVAL_CANCEL.toString();
+            default -> throw new IllegalArgumentException("Invalid retrieval type");
+        };
     }
 
     private Mono<Warehouse> save(WarehouseRequestDto request) {

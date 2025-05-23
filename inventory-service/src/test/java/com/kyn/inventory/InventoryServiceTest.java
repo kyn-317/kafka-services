@@ -18,6 +18,7 @@ import com.kyn.common.dto.OrderDetailDto;
 import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.common.messages.inventory.CartInventoryRequest;
 import com.kyn.common.messages.inventory.CartInventoryResponse;
+import com.kyn.inventory.application.repository.WarehouseRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,7 +38,7 @@ public class InventoryServiceTest extends AbstractIntegrationTest {
     @Autowired
     private StreamBridge streamBridge;
 
-    /* @Test
+    @Test
     public void deductAndRestoreTest(){
         var orderId = UUID.randomUUID();
         var customerId = UUID.randomUUID();
@@ -77,7 +78,7 @@ public class InventoryServiceTest extends AbstractIntegrationTest {
 
     }
 
-    @Test // please remove this - not a good fit for embedded kafka test. should be covered as part of unit tests
+    @Test
     public void restoreWithoutDeductTest(){
         var orderId = UUID.randomUUID();
         var customerId = UUID.randomUUID();
@@ -160,7 +161,7 @@ public class InventoryServiceTest extends AbstractIntegrationTest {
                 .timeout(Duration.ofSeconds(2), Mono.empty())
                 .as(StepVerifier::create)
                 .verifyComplete();
-    } */
+    }
 
     @TestConfiguration
     static class TestConfig {

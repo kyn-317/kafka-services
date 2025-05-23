@@ -11,10 +11,12 @@ import com.kyn.payment.common.service.CartPaymentService;
 import com.kyn.payment.messaging.mapper.CartMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartPaymentRequestProcessorImpl implements CartPaymentRequestProcessor {
     private final CartPaymentService service;
 
@@ -23,13 +25,15 @@ public class CartPaymentRequestProcessorImpl implements CartPaymentRequestProces
         var dto = CartMapper.toProcessRequest(request);
         return this.service.process(dto)
                            .map(processed -> CartMapper.toProcessedResponse(request,processed))
+                           .doOnNext(e -> log.info("payment processed {}", e))
                            .transform(exceptionHandler(request));
     }
 
     @Override
     public Mono<CartPaymentResponse> handle(CartPaymentRequest.Refund request) {
         return this.service.refund(request.requestItem().getOrderId())
-                           .then(Mono.empty());
+               .then(Mono.empty());
+
     }
 
     private UnaryOperator<Mono<CartPaymentResponse>> exceptionHandler(CartPaymentRequest.Process request) {

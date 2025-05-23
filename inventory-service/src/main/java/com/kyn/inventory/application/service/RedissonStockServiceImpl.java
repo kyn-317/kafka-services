@@ -73,6 +73,10 @@ public class RedissonStockServiceImpl implements RedissonStockService {
     public Mono<Void> insertStockBatch(Map<String, Integer> stocks) {
         return Flux.fromIterable(stocks.entrySet())
             .flatMap(entry -> stockMap.fastPut(entry.getKey(), entry.getValue()))
+            .onErrorResume(error -> {
+                log.error("Failed to insert stock batch", error);
+                return Mono.error(error);
+            })
             .then();
     }
     
