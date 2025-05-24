@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Data
@@ -16,11 +15,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(schema = "order_data", name = "order_workflow_action")
-public class OrderWorkFlowAction {
+public class OrderWorkFlowAction extends BaseDocuments{
 
     @Id
-    private UUID id;
+    private UUID orderWorkflowActionId;
     private UUID orderId;
     private WorkflowAction action;
-    private Instant createdAt;
 }

@@ -17,10 +17,10 @@ spring:
           useNativeEncoding: true
       bindings:
         processor-in-0:
-          destination: inventory-request
+          destination: cart-inventory-request
           group: inventory-service-group
         processor-out-0:
-          destination: inventory-response
+          destination: cart-inventory-response
       kafka:
         binder:
           consumer-properties:
@@ -31,6 +31,13 @@ spring:
           producer-properties:
             "value.serializer": org.springframework.kafka.support.serializer.JsonSerializer
             "key.serializer": org.apache.kafka.common.serialization.StringSerializer
+        brokers: localhost:9092
+        consumer:
+            configuration:
+              heartbeat.interval.ms: 3000
+              session.timeout.ms: 600000
+              max.poll.interval.ms: 300000
+              request.timeout.ms: 605000
 
 server:
   port: 8084

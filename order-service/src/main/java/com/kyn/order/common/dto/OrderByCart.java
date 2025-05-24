@@ -8,6 +8,4 @@ import com.kyn.common.dto.CartResponse;
 import lombok.Builder;
 
 @Builder
-public record OrderByCart(UUID customerId, CartResponse cart) {
-    
-}
+public record OrderByCart(UUID customerId, CartResponse cart) {}

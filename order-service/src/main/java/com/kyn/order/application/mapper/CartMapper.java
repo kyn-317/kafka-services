@@ -107,9 +107,8 @@ public class CartMapper {
 
     public static CartOrderWorkflowActionDto toCartOrderWorkflowActionDto(OrderWorkFlowAction orderWorkflowAction) {
         return CartOrderWorkflowActionDto.builder()
-        .id(orderWorkflowAction.getId())
+        .id(orderWorkflowAction.getOrderWorkflowActionId())
         .orderId(orderWorkflowAction.getOrderId())
-        .createdAt(orderWorkflowAction.getCreatedAt())
         .action(orderWorkflowAction.getAction())
         .build();
     }
@@ -125,15 +124,13 @@ public class CartMapper {
         return OrderWorkFlowAction.builder()
                                   .orderId(orderId)
                                   .action(action)
-                                  .createdAt(Instant.now())
                                   .build();
     }
 
     public static OrderWorkflowActionDto toOrderWorkflowActionDto(OrderWorkFlowAction orderWorkflowAction) {
         return OrderWorkflowActionDto.builder()
-                                     .id(orderWorkflowAction.getId())
+                                     .id(orderWorkflowAction.getOrderWorkflowActionId())
                                      .orderId(orderWorkflowAction.getOrderId())
-                                     .createdAt(orderWorkflowAction.getCreatedAt())
                                      .action(orderWorkflowAction.getAction())
                                      .build();
     }

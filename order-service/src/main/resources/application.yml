@@ -14,14 +14,14 @@ spring:
           destination: payment-request
         inventory-request-channel:
           destination: inventory-request
+        messageEventSupplier-out-0:
+          destination: message-request
         cartOrderOrchestrator-in-0:
           destination: cart-payment-response,cart-inventory-response
         cart-payment-request-channel:
           destination: cart-payment-request
         cart-inventory-request-channel:
           destination: cart-inventory-request
-        messageEventSupplier-out-0:
-          destination: message-request
         templateMessageEventSupplier-out-0:
           destination: template-message-request
       kafka:
@@ -34,6 +34,13 @@ spring:
           producer-properties:
             "value.serializer": org.springframework.kafka.support.serializer.JsonSerializer
             "key.serializer": org.apache.kafka.common.serialization.StringSerializer
+          brokers: localhost:9092
+          consumer:
+            configuration:
+              heartbeat.interval.ms: 3000
+              session.timeout.ms: 600000
+              max.poll.interval.ms: 300000
+              request.timeout.ms: 605000
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/kynpost
     username: kynpostgres

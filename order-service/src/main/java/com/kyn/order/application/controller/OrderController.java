@@ -38,8 +38,8 @@ public class OrderController {
 
 
     @PostMapping("byCart")
-    public Mono<ResponseEntity<OrderSummaryDto>> placeOrderByCart(@RequestBody Mono<OrderByCart> mono) {
-        return mono.flatMap(this.cartOrderService::placeOrderByCart)
+    public Mono<ResponseEntity<OrderSummaryDto>> placeOrderByCart(@RequestBody OrderByCart orderByCart) {
+        return this.cartOrderService.placeOrderByCart(orderByCart)
                    .map(ResponseEntity.accepted()::body);
     }
 

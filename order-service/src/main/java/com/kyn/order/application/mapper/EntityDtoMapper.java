@@ -43,15 +43,13 @@ public class EntityDtoMapper {
         return OrderWorkFlowAction.builder()
                                   .orderId(orderId)
                                   .action(action)
-                                  .createdAt(Instant.now())
                                   .build();
     }
 
     public static OrderWorkflowActionDto toOrderWorkflowActionDto(OrderWorkFlowAction orderWorkflowAction) {
         return OrderWorkflowActionDto.builder()
-                                     .id(orderWorkflowAction.getId())
+                                     .id(orderWorkflowAction.getOrderWorkflowActionId())
                                      .orderId(orderWorkflowAction.getOrderId())
-                                     .createdAt(orderWorkflowAction.getCreatedAt())
                                      .action(orderWorkflowAction.getAction())
                                      .build();
     }

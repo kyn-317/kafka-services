@@ -10,6 +10,4 @@ public record CartResponse(
     String email,
     List<CartItem> cartItems,
     Double totalPrice
-) {
-    
-}
+) {}

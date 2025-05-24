@@ -15,13 +15,18 @@ spring:
           useNativeEncoding: true
       bindings:
         processor-in-0:
-          destination: payment-request
+          destination: cart-payment-request
           group: customer-payment-group
         processor-out-0:
-          destination: payment-response
+          destination: cart-payment-response
       kafka:
-
-      
+        brokers: localhost:9092
+        consumer:
+            configuration:
+              heartbeat.interval.ms: 3000
+              session.timeout.ms: 600000
+              max.poll.interval.ms: 300000
+              request.timeout.ms: 605000
         binder:
           consumer-properties:
             "value.deserializer": org.springframework.kafka.support.serializer.JsonDeserializer
