@@ -12,14 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kyn.common.dto.OrderSummaryDto;
 import com.kyn.order.common.dto.OrderByCart;
-import com.kyn.order.common.dto.OrderCreateRequest;
-import com.kyn.order.common.dto.OrderDetails;
-import com.kyn.order.common.dto.PurchaseOrderDto;
 import com.kyn.order.common.service.CartOrderService;
-import com.kyn.order.common.service.OrderService;
 
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -27,14 +22,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderService service;
     private final CartOrderService cartOrderService;
 
-    @PostMapping
-    public Mono<ResponseEntity<PurchaseOrderDto>> placeOrder(@RequestBody Mono<OrderCreateRequest> mono) {
-        return mono.flatMap(this.service::placeOrder)
-                   .map(ResponseEntity.accepted()::body);
-    }
 
 
     @PostMapping("byCart")
@@ -43,14 +32,5 @@ public class OrderController {
                    .map(ResponseEntity.accepted()::body);
     }
 
-    @GetMapping("all")
-    public Flux<PurchaseOrderDto> getAllOrders(){
-        return this.service.getAllOrders();
-    }
-
-    @GetMapping("{orderId}")
-    public Mono<OrderDetails> getOrderDetails(@PathVariable UUID orderId){
-        return this.service.getOrderDetails(orderId);
-    }
 
 }
