@@ -1,4 +1,4 @@
-/* package com.kyn.order;
+package com.kyn.order;
 
 
 import com.kyn.common.messages.Request;
@@ -39,7 +39,7 @@ import java.util.function.Consumer;
 		"logging.level.com.kyn*=INFO",
 		"spring.cloud.stream.kafka.binder.configuration.auto.offset.reset=earliest",
 		"spring.cloud.function.definition=requestConsumer;orderOrchestrator",
-		"spring.cloud.stream.bindings.requestConsumer-in-0.destination=payment-request,inventory-request"
+		"spring.cloud.stream.bindings.requestConsumer-in-0.destination=cart-payment-request,cart-inventory-request"
 })
 @EmbeddedKafka(
 		partitions = 1,
@@ -162,4 +162,3 @@ public abstract class AbstractIntegrationTest {
 
 	}
 }
- */

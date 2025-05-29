@@ -7,15 +7,6 @@ spring:
         producer:
           useNativeEncoding: true
       bindings:
-        orderOrchestrator-in-0:
-          destination: payment-response,inventory-response
-          group: order-service-group
-        payment-request-channel:
-          destination: payment-request
-        inventory-request-channel:
-          destination: inventory-request
-        messageEventSupplier-out-0:
-          destination: message-request
         cartOrderOrchestrator-in-0:
           destination: cart-payment-response,cart-inventory-response
         cart-payment-request-channel:

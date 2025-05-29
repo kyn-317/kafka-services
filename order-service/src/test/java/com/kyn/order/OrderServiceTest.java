@@ -1,4 +1,4 @@
-/* package com.kyn.order;
+package com.kyn.order;
 import com.kyn.common.messages.inventory.InventoryRequest;
 import com.kyn.common.messages.inventory.InventoryResponse;
 import com.kyn.common.messages.payment.PaymentRequest;
@@ -197,4 +197,4 @@ public class OrderServiceTest extends AbstractIntegrationTest {
 
     }
 
-} */
+}
