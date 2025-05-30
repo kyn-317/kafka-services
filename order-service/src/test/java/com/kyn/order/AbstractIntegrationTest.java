@@ -1,11 +1,14 @@
 package com.kyn.order;
 
 
+import com.kyn.common.messages.CartRequest;
 import com.kyn.common.messages.Request;
 import com.kyn.common.messages.inventory.InventoryRequest;
 import com.kyn.common.messages.inventory.InventoryResponse;
 import com.kyn.common.messages.payment.PaymentRequest;
 import com.kyn.common.messages.payment.PaymentResponse;
+import com.kyn.order.common.dto.CartOrderDetails;
+import com.kyn.order.common.dto.OrderByCart;
 import com.kyn.order.common.dto.OrderCreateRequest;
 import com.kyn.order.common.dto.OrderDetails;
 import com.kyn.order.common.dto.PurchaseOrderDto;
@@ -48,8 +51,8 @@ import java.util.function.Consumer;
 @Import(AbstractIntegrationTest.TestConfig.class)
 public abstract class AbstractIntegrationTest {
 
-	private static final Sinks.Many<Request> resSink = Sinks.many().unicast().onBackpressureBuffer();
-	private static final Flux<Request> resFlux = resSink.asFlux().cache(0);
+	private static final Sinks.Many<CartRequest> resSink = Sinks.many().unicast().onBackpressureBuffer();
+	private static final Flux<CartRequest> resFlux = resSink.asFlux().cache(0);
 
 	@Autowired
 	private WebTestClient client;
@@ -58,11 +61,11 @@ public abstract class AbstractIntegrationTest {
 	private StreamBridge streamBridge;
 
 	protected void emitResponse(PaymentResponse response){
-		this.streamBridge.send("payment-response", response);
+		this.streamBridge.send("cart-payment-response", response);
 	}
 
 	protected void emitResponse(InventoryResponse response){
-		this.streamBridge.send("inventory-response", response);
+		this.streamBridge.send("cart-inventory-response", response);
 	}
 
 
@@ -81,18 +84,43 @@ public abstract class AbstractIntegrationTest {
 		return orderIdRef.get();
 	}
 
-	protected void verifyOrderDetails(UUID orderId, Consumer<OrderDetails> assertion){
+	
+	protected UUID initiateCartOrder(OrderByCart request){
+		var orderIdRef = new AtomicReference<UUID>();
+		this.client
+				.post()
+				.uri("/order/byCart")
+				.bodyValue(request)
+				.exchange()
+				.expectStatus().isAccepted()
+				.expectBody()
+				.jsonPath("$.orderId").exists()
+				.jsonPath("$.orderId").value(id -> orderIdRef.set(UUID.fromString(id.toString())));
+		return orderIdRef.get();
+	}
+
+
+	protected void verifyOrderDetails(UUID orderId){
 		this.client
 				.get()
 				.uri("/order/{orderId}", orderId)
 				.exchange()
 				.expectStatus().is2xxSuccessful()
-				.expectBody(OrderDetails.class)
+				.expectBody(CartOrderDetails.class)
 				.value(r -> {
 					Assertions.assertEquals(orderId, r.order().orderId());
 					Assertions.assertNotNull(r.actions());
-					assertion.accept(r);
 				});
+	}
+
+	protected void verifyOrderDetails(UUID orderId, Consumer<CartOrderDetails> assertions){
+		this.client
+				.get()
+				.uri("/order/{orderId}", orderId)
+				.exchange()
+				.expectStatus().is2xxSuccessful()
+				.expectBody(CartOrderDetails.class)
+				.value(assertions);
 	}
 
 	protected void verifyAllOrders(UUID... orderIds){
@@ -156,7 +184,7 @@ public abstract class AbstractIntegrationTest {
 	static class TestConfig {
 
 		@Bean
-		public Consumer<Flux<Request>> requestConsumer(){
+		public Consumer<Flux<CartRequest>> requestConsumer(){
 			return f -> f.doOnNext(resSink::tryEmitNext).subscribe();
 		}
 

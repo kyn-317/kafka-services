@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kyn.common.dto.OrderSummaryDto;
+import com.kyn.order.common.dto.CartOrderDetails;
 import com.kyn.order.common.dto.OrderByCart;
 import com.kyn.order.common.service.CartOrderService;
 
@@ -32,5 +33,9 @@ public class OrderController {
                    .map(ResponseEntity.accepted()::body);
     }
 
-
+    @GetMapping("/{orderId}")
+    public Mono<ResponseEntity<CartOrderDetails>> getOrderDetails(@PathVariable UUID orderId){
+        return this.cartOrderService.getOrderDetails(orderId)
+                .map(ResponseEntity.ok()::body);
+    }
 }
